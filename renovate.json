@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":dependencyDashboard"
+  ],
+  "assignees": [
+    "alex6dj"
+  ],
+  "baseBranchPatterns": [
+    "develop"
+  ],
+  "major": {
+    "dependencyDashboardApproval": true,
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "automerge": true
+  },
+  "minor": {
+    "automerge": true
+  },
+  "patch": {
+    "automerge": true
+  },
+  "pin": {
+    "automerge": true
+  },
+  "digest": {
+    "automerge": true
+  },
+  "automergeType": "pr",  
+  "timezone": "America/Montevideo",
+  "schedule": [
+    "before 4am on sunday"
+  ]
+}
