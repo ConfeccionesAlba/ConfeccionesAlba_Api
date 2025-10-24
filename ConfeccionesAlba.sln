@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfeccionesAlba_Api", "src\ConfeccionesAlba_Api\ConfeccionesAlba_Api.csproj", "{03072AFC-A222-400B-AA72-BC8A073D8942}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F46D2EB9-A9BF-4792-9692-5B1DDE306DD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,8 @@ Global
 		{03072AFC-A222-400B-AA72-BC8A073D8942}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03072AFC-A222-400B-AA72-BC8A073D8942}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03072AFC-A222-400B-AA72-BC8A073D8942}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{03072AFC-A222-400B-AA72-BC8A073D8942} = {F46D2EB9-A9BF-4792-9692-5B1DDE306DD5}
 	EndGlobalSection
 EndGlobal
