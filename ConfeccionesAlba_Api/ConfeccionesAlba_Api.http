@@ -1,0 +1,6 @@
+@ConfeccionesAlba_Api_HostAddress = http://localhost:5062
+
+GET {{ConfeccionesAlba_Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
