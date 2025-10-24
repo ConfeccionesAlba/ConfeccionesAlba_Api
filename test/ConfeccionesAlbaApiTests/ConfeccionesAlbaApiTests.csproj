@@ -20,4 +20,8 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\ConfeccionesAlba_Api\ConfeccionesAlba_Api.csproj" />
+    </ItemGroup>
+
 </Project>

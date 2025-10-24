@@ -1,4 +1,4 @@
-﻿namespace ConfeccionesAlba_Api;
+﻿namespace ConfeccionesAlbaApiTests;
 
 public class DummyTests
 {
