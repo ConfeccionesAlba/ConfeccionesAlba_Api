@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ConfeccionesAlba_Api/ConfeccionesAlba_Api.csproj", "ConfeccionesAlba_Api/"]
-RUN dotnet restore "ConfeccionesAlba_Api/ConfeccionesAlba_Api.csproj"
+COPY ["src/ConfeccionesAlba_Api/ConfeccionesAlba_Api.csproj", "src/ConfeccionesAlba_Api/"]
+RUN dotnet restore "src/ConfeccionesAlba_Api/ConfeccionesAlba_Api.csproj"
 COPY . .
-WORKDIR "/src/ConfeccionesAlba_Api"
+WORKDIR "/src/src/ConfeccionesAlba_Api"
 RUN dotnet build "./ConfeccionesAlba_Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
