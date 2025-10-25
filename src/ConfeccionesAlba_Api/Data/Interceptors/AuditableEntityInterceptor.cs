@@ -1,10 +1,9 @@
 using ConfeccionesAlba_Api.Models.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ConfeccionesAlba_Api.Data.Interceptors;
-
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
 
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
