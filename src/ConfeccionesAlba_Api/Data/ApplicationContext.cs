@@ -1,4 +1,5 @@
 using ConfeccionesAlba_Api.Model;
+using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,4 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         
     }
+    
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }
