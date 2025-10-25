@@ -19,6 +19,8 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         
         foreach (var entry in dbContext.ChangeTracker.Entries().Where(IsAddedOrModified))
         {
+            var currentTime = DateTime.UtcNow;
+            
             if (entry.Entity is not IAuditableEntity auditable)
             {
                 continue;
@@ -26,11 +28,12 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
             
             if (entry.State == EntityState.Added)
             {
-                auditable.CreatedOn = DateTime.UtcNow;
+                auditable.CreatedOn = currentTime;
+                auditable.UpdatedOn = currentTime;
             }
             else if (entry.State == EntityState.Modified)
             {
-                auditable.UpdatedOn = DateTime.UtcNow;
+                auditable.UpdatedOn = currentTime;
             }
         }
 
