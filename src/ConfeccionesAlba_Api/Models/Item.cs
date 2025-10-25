@@ -4,7 +4,7 @@ using ConfeccionesAlba_Api.Models.Interfaces;
 
 namespace ConfeccionesAlba_Api.Models;
 
-public class Item : ITrackedEntity
+public class Item : IAuditableEntity
 {
     [Key]
     public int Id { get; set; }
@@ -28,6 +28,6 @@ public class Item : ITrackedEntity
     
     public bool IsVisible { get; set; } = true;
 
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 }

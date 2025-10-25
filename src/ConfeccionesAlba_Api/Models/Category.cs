@@ -3,7 +3,7 @@ using ConfeccionesAlba_Api.Models.Interfaces;
 
 namespace ConfeccionesAlba_Api.Models;
 
-public class Category : ITrackedEntity
+public class Category : IAuditableEntity
 {
     [Key]
     public int Id { get; set; }
@@ -18,6 +18,6 @@ public class Category : ITrackedEntity
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
 
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 }
