@@ -19,7 +19,7 @@ public class Item : IAuditableEntity
     
     public int CategoryId { get; set; }
     
-    [ForeignKey("FK_Item_Category_CategoryId")]
+    [ForeignKey("CategoryId")]
     public Category? Category { get; set; }
     
     public decimal PriceReference { get; set; }
