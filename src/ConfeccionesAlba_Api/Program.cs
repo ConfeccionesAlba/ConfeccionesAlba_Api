@@ -1,4 +1,5 @@
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,12 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
 
+// Log the connection string (for development/debugging only, redact sensitive info in production)
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole(); // Or other logging providers
+});
+
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
@@ -17,6 +24,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+if (app.Environment.IsDevelopment())
+{
+    // Logging the full string (use with caution)
+    logger.LogInformation("Connection String: {ConnectionString}", connectionString);
+}
+else
+{
+    // Logging a redacted version (For Production)
+    var redactedConnectionString = RedactSensitiveInfo(connectionString); // Implement this method
+    logger.LogInformation("Redacted Connection String: {RedactedConnectionString}", redactedConnectionString);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,6 +67,13 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast");
 
 await app.RunAsync();
+return;
+
+// Redact sensitive information by returning SHA256 hash of the connection string
+string RedactSensitiveInfo(string connString)
+{
+    return string.IsNullOrEmpty(connString) ? connString : connString.GetSha256Hash();
+}
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
