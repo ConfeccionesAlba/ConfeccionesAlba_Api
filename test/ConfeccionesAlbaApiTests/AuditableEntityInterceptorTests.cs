@@ -30,10 +30,10 @@ namespace ConfeccionesAlbaApiTests
         }
 
         [Test]
-        public void Category_CreatedOnAndUpdatedOn_SetWhenAdded()
+        public async Task Category_CreatedOnAndUpdatedOn_SetWhenAdded()
         {
             // Arrange
-            using var context = new ApplicationDbContext(_options);
+            await using var context = new ApplicationDbContext(_options);
 
             var category = new Category
             {
@@ -44,7 +44,7 @@ namespace ConfeccionesAlbaApiTests
 
             // Act
             context.Categories.Add(category);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert
             category.CreatedOn.Should().NotBe(default);
@@ -53,10 +53,10 @@ namespace ConfeccionesAlbaApiTests
         }
 
         [Test]
-        public void Category_UpdatedOn_SetWhenModified()
+        public async Task Category_UpdatedOn_SetWhenModified()
         {
             // Arrange
-            using var context = new ApplicationDbContext(_options);
+            await using var context = new ApplicationDbContext(_options);
 
             var category = new Category
             {
@@ -66,11 +66,11 @@ namespace ConfeccionesAlbaApiTests
             };
 
             context.Categories.Add(category);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Act - Simulate a modification
             category.Description = "Updated Description";
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert
             category.CreatedOn.Should().NotBe(default);
@@ -79,10 +79,10 @@ namespace ConfeccionesAlbaApiTests
         }
 
         [Test]
-        public void Item_CreatedOn_SetWhenAdded()
+        public async Task Item_CreatedOn_SetWhenAdded()
         {
             // Arrange
-            using var context = new ApplicationDbContext(_options);
+            await using var context = new ApplicationDbContext(_options);
 
             var item = new Item
             {
@@ -94,7 +94,7 @@ namespace ConfeccionesAlbaApiTests
 
             // Act
             context.Items.Add(item);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert
             item.CreatedOn.Should().NotBe(default);
@@ -103,10 +103,10 @@ namespace ConfeccionesAlbaApiTests
         }
 
         [Test]
-        public void Item_UpdatedOn_SetWhenModified()
+        public async Task Item_UpdatedOn_SetWhenModified()
         {
             // Arrange
-            using var context = new ApplicationDbContext(_options);
+            await using var context = new ApplicationDbContext(_options);
 
             var item = new Item
             {
@@ -117,11 +117,11 @@ namespace ConfeccionesAlbaApiTests
             };
 
             context.Items.Add(item);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Act - Simulate a modification
             item.PriceReference = 15.99m;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert
             item.CreatedOn.Should().NotBe(default);
@@ -144,10 +144,10 @@ namespace ConfeccionesAlbaApiTests
         // }
 
         [Test]
-        public void Multiple_Entities_Auditing()
+        public async Task Multiple_Entities_Auditing()
         {
             // Arrange
-            using var context = new ApplicationDbContext(_options);
+            await using var context = new ApplicationDbContext(_options);
 
             var category = new Category
             {
@@ -167,7 +167,7 @@ namespace ConfeccionesAlbaApiTests
 
             // Act
             context.Add(item);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert both entities have proper audit timestamps
             category.CreatedOn.Should().NotBe(default);
@@ -181,7 +181,7 @@ namespace ConfeccionesAlbaApiTests
             category.Description = "Updated Category Description";
             item.PriceReference = 15.99m;
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             // Assert both entities have updated timestamps
             category.UpdatedOn.Should().NotBe(default);
