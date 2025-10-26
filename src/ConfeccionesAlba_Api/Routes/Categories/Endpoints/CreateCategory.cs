@@ -2,27 +2,15 @@ using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Categories;
-using ConfeccionesAlba_Api.Models.Dtos.Categories.Validators;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 public static class CreateCategory
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryCreateDtoValidator validator, CategoryCreateDto categoryDto)
+    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryCreateDto categoryDto)
     {
         var response = new ApiResponse();
-
-        var validationResult = await validator.ValidateAsync(categoryDto).ConfigureAwait(false);
-        
-        if (!validationResult.IsValid)
-        {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.AddRange(validationResult.Errors.Select(error => error.ErrorMessage));
-
-            return TypedResults.BadRequest(response);
-        }
         
         try
         {

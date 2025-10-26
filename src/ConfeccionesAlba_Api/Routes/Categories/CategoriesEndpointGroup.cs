@@ -1,3 +1,5 @@
+using ConfeccionesAlba_Api.Filters;
+using ConfeccionesAlba_Api.Models.Dtos.Categories;
 using ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 namespace ConfeccionesAlba_Api.Routes.Categories;
@@ -20,11 +22,13 @@ public static class CategoriesEndpointGroup
         
         group.MapPost("/", CreateCategory.Handle)
             .WithName(CategoriesEndpointNames.CreateCategory)
-            .WithSummary("Create new category");
+            .WithSummary("Create new category")
+            .AddEndpointFilter<ValidationFilter<CategoryCreateDto>>();
         
         group.MapPut("/{id:int}", UpdateCategoryById.Handle)
             .WithName(CategoriesEndpointNames.UpdateCategory)
-            .WithSummary("Update category");
+            .WithSummary("Update category")
+            .AddEndpointFilter<ValidationFilter<CategoryUpdateDto>>();
         
         return group;
     }

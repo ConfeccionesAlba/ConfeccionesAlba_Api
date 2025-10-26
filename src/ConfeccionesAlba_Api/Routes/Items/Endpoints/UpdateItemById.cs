@@ -2,14 +2,13 @@ using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Items;
-using ConfeccionesAlba_Api.Models.Dtos.Items.Validators;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
 public static class UpdateItemById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemUpdateDtoValidator validator, ItemUpdateDto itemDto, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemUpdateDto itemDto, int id)
     {
         var response = new ApiResponse();
 
@@ -18,17 +17,6 @@ public static class UpdateItemById
             response.IsSuccess = false;
             response.StatusCode = HttpStatusCode.BadRequest;
             response.ErrorMessages.Add("Invalid item id");
-
-            return TypedResults.BadRequest(response);
-        }
-        
-        var validationResult = await validator.ValidateAsync(itemDto).ConfigureAwait(false);
-        
-        if (!validationResult.IsValid)
-        {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.AddRange(validationResult.Errors.Select(error => error.ErrorMessage));
 
             return TypedResults.BadRequest(response);
         }
