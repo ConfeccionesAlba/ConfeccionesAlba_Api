@@ -1,5 +1,6 @@
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Routes.Categories;
+using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,7 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast");
 
 app.MapCategoriesEndpoints();
+app.MapItemsEndpoints();
 
 await app.RunAsync();
 return;
