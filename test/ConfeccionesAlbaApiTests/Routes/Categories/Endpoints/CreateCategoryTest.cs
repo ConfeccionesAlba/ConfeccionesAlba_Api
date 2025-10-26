@@ -17,14 +17,12 @@ public class CreateCategoryTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
-    private CategoryCreateDtoValidator _validator;
 
     [SetUp]
     public void SetUp()
     {
         _fixture = new DbContextFactoryFixture();
         _context = _fixture.GetDbContext();
-        _validator = new CategoryCreateDtoValidator();
     }
 
     [TearDown]
@@ -44,7 +42,7 @@ public class CreateCategoryTest
         };
 
         // Act
-        var result = (await CreateCategory.Handle(_context, _validator, categoryDto)).Result;
+        var result = (await CreateCategory.Handle(_context, categoryDto)).Result;
         
         // Assert
         result.Should().NotBeNull();
@@ -61,30 +59,6 @@ public class CreateCategoryTest
         categories.First().Name.Should().Be(categoryDto.Name);
         categories.First().Description.Should().Be(categoryDto.Description);
     }
-
-    [Test]
-    public async Task Handle_ValidationFails_ReturnsBadRequest()
-    {
-        // Arrange
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = "", // Invalid - required field
-            Description = "Test Description"
-        };
-    
-        // Act
-        var result = (await CreateCategory.Handle(_context, _validator, categoryDto)).Result;
-    
-        // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<BadRequest<ApiResponse>>();
-    
-        var badRequestResult = (BadRequest<ApiResponse>)result;
-        badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        badRequestResult.Value.IsSuccess.Should().BeFalse();
-        badRequestResult.Value.ErrorMessages.Should().HaveCount(1);
-        badRequestResult.Value.ErrorMessages.First().Should().Contain("Name");
-    }
     
     [Test]
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
@@ -98,7 +72,7 @@ public class CreateCategoryTest
     
         // Act - Simulate a database error by disposing the context
         _context.Dispose();
-        var result = (await CreateCategory.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), _validator, categoryDto)).Result;
+        var result = (await CreateCategory.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), categoryDto)).Result;
     
         // Assert
         result.Should().NotBeNull();
@@ -108,56 +82,6 @@ public class CreateCategoryTest
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();
         internalErrorResult.Value.ErrorMessages.Should().HaveCount(1);
-    }
-    
-    [Test]
-    public async Task Handle_NameTooLong_ReturnsBadRequest()
-    {
-        // Arrange
-        var longName = new string('a', 251); // Exceeds 250 character limit
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = longName,
-            Description = "Test Description"
-        };
-    
-        // Act
-        var result = (await CreateCategory.Handle(_context, _validator, categoryDto)).Result;
-    
-        // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<BadRequest<ApiResponse>>();
-    
-        var badRequestResult = (BadRequest<ApiResponse>)result;
-        badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        badRequestResult.Value.IsSuccess.Should().BeFalse();
-        badRequestResult.Value.ErrorMessages.Should().HaveCount(1);
-        badRequestResult.Value.ErrorMessages.First().Should().Contain("Name");
-    }
-    
-    [Test]
-    public async Task Handle_DescriptionTooLong_ReturnsBadRequest()
-    {
-        // Arrange
-        var longDescription = new string('a', 501); // Exceeds 500 character limit
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = "Test Category",
-            Description = longDescription
-        };
-    
-        // Act
-        var result = (await CreateCategory.Handle(_context, _validator, categoryDto)).Result;
-    
-        // Assert
-        result.Should().NotBeNull();
-        result.Should().BeOfType<BadRequest<ApiResponse>>();
-    
-        var badRequestResult = (BadRequest<ApiResponse>)result;
-        badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        badRequestResult.Value.IsSuccess.Should().BeFalse();
-        badRequestResult.Value.ErrorMessages.Should().HaveCount(1);
-        badRequestResult.Value.ErrorMessages.First().Should().Contain("Description");
     }
     
     [Test]
@@ -171,7 +95,7 @@ public class CreateCategoryTest
         };
     
         // Act
-        var result = (await CreateCategory.Handle(_context, _validator, categoryDto)).Result;
+        var result = (await CreateCategory.Handle(_context, categoryDto)).Result;
     
         // Assert
         result.Should().NotBeNull();
@@ -206,8 +130,8 @@ public class CreateCategoryTest
         };
     
         // Act
-        var result1 = (await CreateCategory.Handle(_context, _validator, categoryDto1)).Result;
-        var result2 = (await CreateCategory.Handle(_context, _validator, categoryDto2)).Result;
+        var result1 = (await CreateCategory.Handle(_context, categoryDto1)).Result;
+        var result2 = (await CreateCategory.Handle(_context, categoryDto2)).Result;
     
         // Assert
         result1.Should().NotBeNull();
