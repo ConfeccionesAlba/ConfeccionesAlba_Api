@@ -1,6 +1,7 @@
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Utils;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ else
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
