@@ -56,8 +56,8 @@ public class CreateCategoryTest
         // Verify the category was added to the database
         var categories = await _context.Categories.ToListAsync();
         categories.Should().HaveCount(1);
-        categories.First().Name.Should().Be(categoryDto.Name);
-        categories.First().Description.Should().Be(categoryDto.Description);
+        categories[0].Name.Should().Be(categoryDto.Name);
+        categories[0].Description.Should().Be(categoryDto.Description);
     }
     
     [Test]
@@ -109,8 +109,8 @@ public class CreateCategoryTest
         // Verify the category was added to the database
         var categories = await _context.Categories.ToListAsync();
         categories.Should().HaveCount(1);
-        categories.First().Name.Should().Be(categoryDto.Name);
-        categories.First().Description.Should().BeEmpty();
+        categories[0].Name.Should().Be(categoryDto.Name);
+        categories[0].Description.Should().BeEmpty();
     }
 
     [Test]
