@@ -15,7 +15,8 @@ public static class GetCategories
         try
         {
             var categories = await db.Categories.ToListAsync();
-            
+
+            response.StatusCode = HttpStatusCode.OK;
             response.Result = categories;
         
             return TypedResults.Ok(response);
