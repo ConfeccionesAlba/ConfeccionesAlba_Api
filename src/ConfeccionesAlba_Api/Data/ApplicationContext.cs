@@ -1,5 +1,4 @@
 using ConfeccionesAlba_Api.Data.Interceptors;
-using ConfeccionesAlba_Api.Model;
 using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

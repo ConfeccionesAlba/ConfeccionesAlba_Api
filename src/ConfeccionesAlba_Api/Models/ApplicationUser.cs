@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace ConfeccionesAlba_Api.Model;
+namespace ConfeccionesAlba_Api.Models;
 
 public class ApplicationUser : IdentityUser
 {
