@@ -14,7 +14,7 @@ public static class CategoriesEndpointGroup
             .WithName(CategoriesEndpointNames.GetCategories)
             .WithSummary("Get all categories");
         
-        group.MapPost("/{id:int}", GetCategoryById.Handle)
+        group.MapGet("/{id:int}", GetCategoryById.Handle)
             .WithName(CategoriesEndpointNames.GetCategoryById)
             .WithSummary("Get category by Id");
         
