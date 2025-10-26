@@ -1,0 +1,39 @@
+using ConfeccionesAlba_Api.Routes.Categories.Endpoints;
+
+namespace ConfeccionesAlba_Api.Routes.Categories;
+
+public static class CategoriesEndpointGroup
+{
+    public static RouteGroupBuilder MapCategoriesEndpoints(this WebApplication app)
+    {
+        var group = app.MapGroup("api/categories")
+            .WithTags("Category Api")
+            .WithOpenApi();
+        
+        group.MapGet("/", GetCategories.Handle)
+            .WithName(CategoriesEndpointNames.GetCategories)
+            .WithSummary("Get all categories");
+        
+        group.MapPost("/{id:int}", GetCategoryById.Handle)
+            .WithName(CategoriesEndpointNames.GetCategoryById)
+            .WithSummary("Get category by Id");
+        
+        group.MapPost("/", CreateCategory.Handle)
+            .WithName(CategoriesEndpointNames.CreateCategory)
+            .WithSummary("Create new category");
+        
+        group.MapPut("/{id:int}", UpdateCategoryById.Handle)
+            .WithName(CategoriesEndpointNames.UpdateCategory)
+            .WithSummary("Update category");
+        
+        return group;
+    }
+}
+
+public static class CategoriesEndpointNames
+{
+    public const string GetCategories = "GetCategories";
+    public const string GetCategoryById = "GetCategoryById";
+    public const string CreateCategory = "CreateCategory";
+    public const string UpdateCategory = "UpdateCategory";
+} 
