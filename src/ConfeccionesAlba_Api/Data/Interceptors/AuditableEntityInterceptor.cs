@@ -39,6 +39,13 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, 
+        InterceptionResult<int> result, CancellationToken cancellationToken = new())
+    {
+        SavingChanges(eventData, result);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
     private static bool IsAddedOrModified(EntityEntry e)
     {
         return e.State is EntityState.Added or EntityState.Modified;
