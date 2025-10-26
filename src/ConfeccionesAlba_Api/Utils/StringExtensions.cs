@@ -7,6 +7,8 @@ public static class StringExtensions
 {
     public static string GetSha256Hash(this string str)
     {
+        ArgumentNullException.ThrowIfNull(str);
+        
         return GetHashString(str);
     }
 
