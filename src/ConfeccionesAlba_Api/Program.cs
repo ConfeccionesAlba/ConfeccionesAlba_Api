@@ -29,12 +29,12 @@ var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 if (app.Environment.IsDevelopment())
 {
-    // Example of logging the full string (use with caution)
+    // Logging the full string (use with caution)
     logger.LogInformation("Connection String: {ConnectionString}", connectionString);
 }
 else
 {
-    // Example of logging a redacted version
+    // Logging a redacted version (For Production)
     var redactedConnectionString = RedactSensitiveInfo(connectionString); // Implement this method
     logger.LogInformation("Redacted Connection String: {RedactedConnectionString}", redactedConnectionString);
 }
@@ -69,7 +69,7 @@ app.MapGet("/weatherforecast", () =>
 await app.RunAsync();
 return;
 
-// Redact sensitive information by returning SHA1 hash of the connection string
+// Redact sensitive information by returning SHA256 hash of the connection string
 string RedactSensitiveInfo(string connString)
 {
     return string.IsNullOrEmpty(connString) ? connString : connString.GetSha256Hash();
