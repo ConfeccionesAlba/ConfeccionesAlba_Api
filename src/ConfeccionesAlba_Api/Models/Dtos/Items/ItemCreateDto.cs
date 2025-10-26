@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ConfeccionesAlba_Api.Models.Dtos;
+namespace ConfeccionesAlba_Api.Models.Dtos.Items;
 
-public class ItemUpdateDto
+public class ItemCreateDto
 {
-    [Key]
-    public int Id { get; set; }
+    [Required]
+    [MaxLength(250)]
+    public string Name { get; set; } = string.Empty;
     
     [Required]
     [MaxLength(5000)]

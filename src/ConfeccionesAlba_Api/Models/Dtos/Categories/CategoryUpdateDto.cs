@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ConfeccionesAlba_Api.Models.Dtos;
+namespace ConfeccionesAlba_Api.Models.Dtos.Categories;
 
 public class CategoryUpdateDto
 {

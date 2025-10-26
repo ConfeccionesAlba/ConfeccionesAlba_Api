@@ -1,5 +1,8 @@
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Categories;
+using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -23,6 +26,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Setup validators
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 
@@ -67,6 +73,9 @@ app.MapGet("/weatherforecast", () =>
         return forecast;
     })
     .WithName("GetWeatherForecast");
+
+app.MapCategoriesEndpoints();
+app.MapItemsEndpoints();
 
 await app.RunAsync();
 return;
