@@ -50,7 +50,10 @@ else
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.Layout = ScalarLayout.Classic;
+    });
 }
 
 app.UseHttpsRedirection();
