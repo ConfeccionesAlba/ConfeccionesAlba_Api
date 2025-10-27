@@ -42,13 +42,12 @@ public class CreateCategoryTest
         };
 
         // Act
-        var result = (await CreateCategory.Handle(_context, categoryDto)).Result;
+        var result = await CreateCategory.Handle(_context, categoryDto);
         
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
 
-        var createdResult = result as CreatedAtRoute<ApiResponse>;
+        var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
         createdResult.Value.Result.Should().BeOfType<Category>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -71,14 +70,13 @@ public class CreateCategoryTest
         };
     
         // Act - Simulate a database error by disposing the context
-        _context.Dispose();
-        var result = (await CreateCategory.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), categoryDto)).Result;
+        await _context.DisposeAsync();
+        var result = await CreateCategory.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), categoryDto);
     
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<InternalServerError<ApiResponse>>();
     
-        var internalErrorResult = (InternalServerError<ApiResponse>)result;
+        var internalErrorResult = result.Result as InternalServerError<ApiResponse>;
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();
         internalErrorResult.Value.ErrorMessages.Should().HaveCount(1);
@@ -95,13 +93,12 @@ public class CreateCategoryTest
         };
     
         // Act
-        var result = (await CreateCategory.Handle(_context, categoryDto)).Result;
+        var result = await CreateCategory.Handle(_context, categoryDto);
     
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
     
-        var createdResult = (CreatedAtRoute<ApiResponse>)result;
+        var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
         createdResult.Value.Result.Should().BeOfType<Category>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -130,15 +127,15 @@ public class CreateCategoryTest
         };
     
         // Act
-        var result1 = (await CreateCategory.Handle(_context, categoryDto1)).Result;
-        var result2 = (await CreateCategory.Handle(_context, categoryDto2)).Result;
+        var result1 = await CreateCategory.Handle(_context, categoryDto1);
+        var result2 = await CreateCategory.Handle(_context, categoryDto2);
     
         // Assert
         result1.Should().NotBeNull();
-        result1.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result1.Result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
     
         result2.Should().NotBeNull();
-        result2.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result2.Result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
     
         // Verify both categories were added to the database
         var categories = await _context.Categories.ToListAsync();
