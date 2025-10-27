@@ -31,6 +31,7 @@ public static class GetItemById
                 return TypedResults.NotFound(response);
             }
 
+            response.StatusCode = HttpStatusCode.OK;
             response.Result = item;
             return TypedResults.Ok(response);
         }
