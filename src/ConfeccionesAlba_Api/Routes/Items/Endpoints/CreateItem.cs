@@ -30,7 +30,7 @@ public static class CreateItem
             response.Result = newItem;
             response.StatusCode = HttpStatusCode.Created;
 
-            return TypedResults.CreatedAtRoute(response, CategoriesEndpointNames.GetCategoryById, new { newItem.Id });
+            return TypedResults.CreatedAtRoute(response, ItemsEndpointNames.GetItemById, new { newItem.Id });
         }
         catch (Exception exception)
         {
