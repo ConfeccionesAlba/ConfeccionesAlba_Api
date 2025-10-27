@@ -32,6 +32,7 @@ public static class GetCategoryById
             }
 
             response.Result = category;
+            response.StatusCode = HttpStatusCode.OK;
             return TypedResults.Ok(response);
         }
         catch (Exception exception)
