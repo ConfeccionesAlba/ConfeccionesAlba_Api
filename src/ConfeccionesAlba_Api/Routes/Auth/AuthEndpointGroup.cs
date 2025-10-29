@@ -14,7 +14,7 @@ public static class AuthEndpointGroup
         
         group.MapPost("/login", LoginUser.Handle)
             .WithName(AuthEndpointNames.Login)
-            .WithSummary("Login")
+            .WithSummary("Login user")
             .AddEndpointFilter<ValidationFilter<LoginRequestDtoValidator>>();
         
         return group;
