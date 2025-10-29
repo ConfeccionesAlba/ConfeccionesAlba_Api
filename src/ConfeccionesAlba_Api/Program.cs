@@ -39,13 +39,13 @@ builder.Services.AddAuthentication(u =>
     u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(u =>
 {
-    u.RequireHttpsMetadata = false;
+    u.RequireHttpsMetadata = false; // TODO: Enable in production
     u.SaveToken = true;
     u.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-        ValidateIssuer = false,
+        ValidateIssuer = false, // TODO: Setup and activate Issuer and Audience if applicable
         ValidateAudience = false,
         ValidateLifetime = true
     };
