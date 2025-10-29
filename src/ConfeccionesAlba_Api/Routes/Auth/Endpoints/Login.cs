@@ -37,6 +37,7 @@ public static class Login
             JwtSecurityTokenHandler tokenHandler = new();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
+            var roles = await userManager.GetRolesAsync(userFromDb);
             SecurityTokenDescriptor tokenDescriptor = new()
             {
                 Subject = new ClaimsIdentity(
@@ -44,7 +45,7 @@ public static class Login
                     new Claim("fullname", userFromDb.Name),
                     new Claim("id", userFromDb.Id),
                     new Claim(ClaimTypes.Email, userFromDb.Email!),
-                    new Claim(ClaimTypes.Role, userManager.GetRolesAsync(userFromDb).Result.FirstOrDefault()!)
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()!)
                 ]),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
