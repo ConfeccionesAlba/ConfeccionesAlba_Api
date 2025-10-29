@@ -12,7 +12,7 @@ public static class AuthEndpointGroup
             .WithTags("Authentication Api")
             .WithOpenApi();
         
-        group.MapPost("/login", Login.Handle)
+        group.MapPost("/login", LoginUser.Handle)
             .WithName(AuthEndpointNames.Login)
             .WithSummary("Login")
             .AddEndpointFilter<ValidationFilter<LoginRequestDtoValidator>>();

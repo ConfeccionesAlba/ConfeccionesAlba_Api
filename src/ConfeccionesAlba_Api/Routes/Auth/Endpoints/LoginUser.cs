@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
-public static class Login
+public static class LoginUser
 {
     public static async
         Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(UserManager<ApplicationUser> userManager,
