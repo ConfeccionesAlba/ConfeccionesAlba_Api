@@ -15,7 +15,7 @@ public static class Login
 {
     public static async
         Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration, ApplicationDbContext db, LoginRequestDto model)
+            IConfiguration configuration, LoginRequestDto model)
     {
         var response = new ApiResponse();
         var secretKey = configuration.GetValue<string>("ApiSettings:Secret") ??
