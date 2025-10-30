@@ -1,9 +1,18 @@
+using System.Text;
+using ConfeccionesAlba_Api;
+using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Extensions;
+using ConfeccionesAlba_Api.Models;
+using ConfeccionesAlba_Api.Routes.Auth;
 using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,13 +33,56 @@ builder.Services.AddLogging(loggingBuilder =>
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
+// Setup JwtBearer
+builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
+                  throw new InvalidOperationException("Missing configuration settings");
+
+builder.Services.AddAuthentication(u =>
+{
+    u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(u =>
+{
+    u.RequireHttpsMetadata = true;
+    u.SaveToken = true;
+    u.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+    };
+});
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Policy.AdminOnly, policy => policy.RequireRole(UserRoles.Admin))
+    .AddPolicy(Policy.PublisherOnly, policy => policy.RequireRole(UserRoles.Publisher));
+
+builder.Services.AddCors();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await services.EnsureNoPendingMigrationsOrFail();
+    await services.SeedRoles();
+    await services.EnsureAdminUserAndRole();
+}
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
@@ -58,6 +110,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// TODO: Update allowed origin after the Frontend is designed
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("*"));
+app.UseAuthentication();
+app.UseAuthorization();
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -79,6 +136,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapCategoriesEndpoints();
 app.MapItemsEndpoints();
+app.MapAuthEndpoints();
 
 await app.RunAsync();
 return;
