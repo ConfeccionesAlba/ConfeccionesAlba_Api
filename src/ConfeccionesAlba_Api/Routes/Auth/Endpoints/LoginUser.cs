@@ -27,7 +27,6 @@ public static class LoginUser
             var isValid = await userManager.CheckPasswordAsync(userFromDb, model.Password);
             if (!isValid)
             {
-                response.Result = new LoginResponseDto();
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.IsSuccess = false;
                 response.ErrorMessages.Add("Invalid Credentials");
@@ -67,7 +66,6 @@ public static class LoginUser
             return TypedResults.Ok(response);
         }
 
-        response.Result = new LoginResponseDto();
         response.StatusCode = HttpStatusCode.BadRequest;
         response.IsSuccess = false;
         response.ErrorMessages.Add("Invalid Credentials");
