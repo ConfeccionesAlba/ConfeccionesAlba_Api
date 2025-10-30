@@ -1,4 +1,5 @@
 using System.Net;
+using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,36 +9,50 @@ namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
 public static class RegisterUser
 {
-    public static async Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(
-        UserManager<ApplicationUser> userManager, RegisterRequestDto model)
+    public static async Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(
+        UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, RegisterRequestDto model)
     {
         var response = new ApiResponse();
 
-        ApplicationUser newUser = new()
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+        try
         {
-            Email = model.Email,
-            UserName = model.Email,
-            Name = model.Name,
-            NormalizedEmail = model.Email.ToUpper()
-        };
+            ApplicationUser newUser = new()
+            {
+                Email = model.Email,
+                UserName = model.Email,
+                Name = model.Name,
+                NormalizedEmail = model.Email.ToUpper()
+            };
 
-        var result = await userManager.CreateAsync(newUser, model.Password);
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(newUser, UserRoles.Publisher);
+            var result = await userManager.CreateAsync(newUser, model.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(newUser, UserRoles.Publisher);
+                await transaction.CommitAsync();
 
-            response.StatusCode = HttpStatusCode.OK;
-            response.IsSuccess = true;
-            return TypedResults.Ok(response);
+                response.StatusCode = HttpStatusCode.OK;
+                response.IsSuccess = true;
+                return TypedResults.Ok(response);
+            }
+
+            foreach (var error in result.Errors)
+            {
+                response.ErrorMessages.Add(error.Description);
+            }
+
+            response.StatusCode = HttpStatusCode.BadRequest;
+            response.IsSuccess = false;
+            await transaction.RollbackAsync();
+            return TypedResults.BadRequest(response);
         }
-
-        foreach (var error in result.Errors)
+        catch (Exception ex)
         {
-            response.ErrorMessages.Add(error.Description);
+            await transaction.RollbackAsync();
+            response.ErrorMessages.Add(ex.Message);
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            response.IsSuccess = false;
+            return TypedResults.InternalServerError(response);
         }
-
-        response.StatusCode = HttpStatusCode.BadRequest;
-        response.IsSuccess = false;
-        return TypedResults.BadRequest(response);
     }
 }
