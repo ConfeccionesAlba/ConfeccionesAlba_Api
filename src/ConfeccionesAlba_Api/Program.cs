@@ -1,5 +1,6 @@
 using System.Text;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Routes.Auth;
 using ConfeccionesAlba_Api.Routes.Categories;
@@ -58,6 +59,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await services.EnsureNoPendingMigrationsOrFail();
+    await services.EnsureRolesOrRegister();
+    await services.EnsureAdminUserAndRole();
+}
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
