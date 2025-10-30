@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -17,8 +18,8 @@ public static class LoginUser
             IConfiguration configuration, LoginRequestDto model)
     {
         var response = new ApiResponse();
-        var secretKey = configuration.GetValue<string>("Jwt:SecretKey") ??
-                        throw new InvalidOperationException("Jwt:SecretKey");
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
+                          throw new InvalidOperationException("Missing configuration settings");
 
         var userFromDb = await userManager.FindByEmailAsync(model.Email);
         if (userFromDb != null)
@@ -33,7 +34,6 @@ public static class LoginUser
             }
 
             JwtSecurityTokenHandler tokenHandler = new();
-            var key = Encoding.ASCII.GetBytes(secretKey);
 
             var roles = await userManager.GetRolesAsync(userFromDb);
             SecurityTokenDescriptor tokenDescriptor = new()
@@ -45,12 +45,13 @@ public static class LoginUser
                     new Claim(ClaimTypes.Email, userFromDb.Email!),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()!)
                 ]),
-                Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
+                Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationInMinutes),
                 NotBefore = DateTime.UtcNow,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey)),
                     SecurityAlgorithms.HmacSha256Signature),
-                Issuer = configuration.GetValue<string>("Jwt:Issuer"),
-                Audience = configuration.GetValue<string>("Jwt:Audience"),
+                Issuer = configuration.GetValue<string>(jwtSettings.Issuer),
+                Audience = configuration.GetValue<string>(jwtSettings.Audience),
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);

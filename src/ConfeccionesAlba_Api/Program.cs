@@ -1,5 +1,6 @@
 using System.Text;
 using ConfeccionesAlba_Api;
+using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Models;
@@ -34,7 +35,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 
 // Setup JwtBearer
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-var key = builder.Configuration.GetValue<string>("Jwt:SecretKey");
+
+var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
+                  throw new InvalidOperationException("Missing configuration settings");
+
 builder.Services.AddAuthentication(u =>
 {
     u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,12 +50,12 @@ builder.Services.AddAuthentication(u =>
     u.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
     };
 });
 
