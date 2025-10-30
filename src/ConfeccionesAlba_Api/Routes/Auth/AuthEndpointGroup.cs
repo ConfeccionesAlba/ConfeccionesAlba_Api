@@ -16,6 +16,11 @@ public static class AuthEndpointGroup
             .WithName(AuthEndpointNames.Login)
             .WithSummary("Login user")
             .AddEndpointFilter<ValidationFilter<LoginRequestDtoValidator>>();
+
+        group.MapPost("/register", RegisterUser.Handle)
+            .WithName(AuthEndpointNames.Register)
+            .WithSummary("Register user")
+            .AddEndpointFilter<ValidationFilter<RegisterRequestDtoValidator>>();
         
         return group;
     }
@@ -24,4 +29,5 @@ public static class AuthEndpointGroup
 public static class AuthEndpointNames
 {
     public const string Login = "Login";
+    public const string Register = "Register";
 } 
