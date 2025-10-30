@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -7,7 +6,9 @@ using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
@@ -33,35 +34,33 @@ public static class LoginUser
                 return TypedResults.BadRequest(response);
             }
 
-            JwtSecurityTokenHandler tokenHandler = new();
-
             var roles = await userManager.GetRolesAsync(userFromDb);
-            SecurityTokenDescriptor tokenDescriptor = new()
+           
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
+            var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+            List<Claim> claims =
+            [
+                new(JwtRegisteredClaimNames.Sub, userFromDb.Id),
+                new(JwtRegisteredClaimNames.Email, userFromDb.Email!),
+                new(JwtRegisteredClaimNames.Name, userFromDb.Name),
+                ..roles.Select(r => new Claim(ClaimTypes.Role, r)),
+            ];
+
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(
-                [
-                    new Claim("fullname", userFromDb.Name),
-                    new Claim("id", userFromDb.Id),
-                    new Claim(ClaimTypes.Email, userFromDb.Email!),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()!)
-                ]),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationInMinutes),
                 NotBefore = DateTime.UtcNow,
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey)),
-                    SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = credentials,
                 Issuer = configuration.GetValue<string>(jwtSettings.Issuer),
                 Audience = configuration.GetValue<string>(jwtSettings.Audience),
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenHandler = new JsonWebTokenHandler();
+            
+            var accessToken = tokenHandler.CreateToken(tokenDescriptor);
 
-            LoginResponseDto loginResponse = new()
-            {
-                Email = userFromDb.Email!,
-                Token = tokenHandler.WriteToken(token),
-                Role = userManager.GetRolesAsync(userFromDb).Result.FirstOrDefault()!
-            };
+            var loginResponse = new LoginResponseDto { Token = accessToken };
 
             response.Result = loginResponse;
             response.StatusCode = HttpStatusCode.OK;
