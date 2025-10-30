@@ -18,7 +18,7 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task EnsureRolesOrRegister(this IServiceProvider serviceProvider)
+    public static async Task SeedRoles(this IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 

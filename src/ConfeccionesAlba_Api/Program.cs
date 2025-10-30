@@ -64,7 +64,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await services.EnsureNoPendingMigrationsOrFail();
-    await services.EnsureRolesOrRegister();
+    await services.SeedRoles();
     await services.EnsureAdminUserAndRole();
 }
 
