@@ -1,4 +1,5 @@
 using System.Text;
+using ConfeccionesAlba_Api;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Models;
@@ -59,7 +60,10 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddCors();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
