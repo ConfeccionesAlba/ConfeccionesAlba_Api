@@ -1,4 +1,5 @@
 using ConfeccionesAlba_Api.Filters;
+using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth.Validators;
 using ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
@@ -20,7 +21,8 @@ public static class AuthEndpointGroup
         group.MapPost("/register", RegisterUser.Handle)
             .WithName(AuthEndpointNames.Register)
             .WithSummary("Register user")
-            .AddEndpointFilter<ValidationFilter<RegisterRequestDtoValidator>>();
+            .AddEndpointFilter<ValidationFilter<RegisterRequestDtoValidator>>()
+            .RequireAuthorization(Policy.AdminOnly);
         
         return group;
     }
