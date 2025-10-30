@@ -52,8 +52,8 @@ public static class LoginUser
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationInMinutes),
                 NotBefore = DateTime.UtcNow,
                 SigningCredentials = credentials,
-                Issuer = configuration.GetValue<string>(jwtSettings.Issuer),
-                Audience = configuration.GetValue<string>(jwtSettings.Audience),
+                Issuer = jwtSettings.Issuer,
+                Audience = jwtSettings.Audience,
             };
 
             var tokenHandler = new JsonWebTokenHandler();
