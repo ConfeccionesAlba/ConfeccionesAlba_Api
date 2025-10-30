@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -18,8 +17,8 @@ public static class LoginUser
             IConfiguration configuration, LoginRequestDto model)
     {
         var response = new ApiResponse();
-        var secretKey = configuration.GetValue<string>("ApiSettings:Secret") ??
-                        throw new InvalidOperationException("ApiSettings:Secret");
+        var secretKey = configuration.GetValue<string>("Jwt:SecretKey") ??
+                        throw new InvalidOperationException("Jwt:SecretKey");
 
         var userFromDb = await userManager.FindByEmailAsync(model.Email);
         if (userFromDb != null)
@@ -46,9 +45,12 @@ public static class LoginUser
                     new Claim(ClaimTypes.Email, userFromDb.Email!),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault()!)
                 ]),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
+                NotBefore = DateTime.UtcNow,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                    SecurityAlgorithms.HmacSha256Signature),
+                Issuer = configuration.GetValue<string>("Jwt:Issuer"),
+                Audience = configuration.GetValue<string>("Jwt:Audience"),
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
