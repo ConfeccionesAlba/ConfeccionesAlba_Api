@@ -56,6 +56,8 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy(Policy.AdminOnly, policy => policy.RequireRole(UserRoles.Admin))
     .AddPolicy(Policy.PublisherOnly, policy => policy.RequireRole(UserRoles.Publisher));
 
+builder.Services.AddCors();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
