@@ -6,6 +6,7 @@ using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Routes.Auth;
+using ConfeccionesAlba_Api.Routes.Auth.Services;
 using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
@@ -81,6 +82,8 @@ builder.Services.AddOpenApi(options =>
 
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.Services.AddScoped<TokenService>();
 
 var app = builder.Build();
 
