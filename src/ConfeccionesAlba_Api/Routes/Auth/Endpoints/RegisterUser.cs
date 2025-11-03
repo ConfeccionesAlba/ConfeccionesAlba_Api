@@ -1,16 +1,17 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
+public record RegisterRequest(string Name, string Email, string Password);
+
 public static class RegisterUser
 {
     public static async Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(
-        UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, RegisterRequestDto model)
+        UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, RegisterRequest model)
     {
         var response = new ApiResponse();
 

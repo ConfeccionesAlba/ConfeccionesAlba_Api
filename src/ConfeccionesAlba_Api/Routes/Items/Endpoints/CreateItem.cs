@@ -1,15 +1,15 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Items;
-using ConfeccionesAlba_Api.Routes.Categories;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
+public record ItemCreateRequest(string Name, string Description, int CategoryId, decimal PriceReference, bool IsVisible);
+
 public static class CreateItem
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemCreateDto itemDto)
+    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemCreateRequest itemRequest)
     {
         var response = new ApiResponse();
         
@@ -17,11 +17,11 @@ public static class CreateItem
         {
             var newItem = new Item
             {
-                Name = itemDto.Name,
-                Description = itemDto.Description,
-                CategoryId = itemDto.CategoryId,
-                PriceReference = itemDto.PriceReference,
-                IsVisible = itemDto.IsVisible,
+                Name = itemRequest.Name,
+                Description = itemRequest.Description,
+                CategoryId = itemRequest.CategoryId,
+                PriceReference = itemRequest.PriceReference,
+                IsVisible = itemRequest.IsVisible,
             };
 
             db.Items.Add(newItem);

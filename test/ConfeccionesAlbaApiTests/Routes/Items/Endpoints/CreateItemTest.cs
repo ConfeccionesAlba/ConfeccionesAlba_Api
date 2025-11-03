@@ -1,6 +1,5 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Items;
 using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -34,14 +33,11 @@ public class CreateItemTest
     public async Task Handle_SuccessfulItemCreation_ReturnsCreatedAtRoute()
     {
         // Arrange
-        var itemDto = new ItemCreateDto
-        {
-            Name = "Test Item",
-            Description = "Test Description",
-            CategoryId = 1, // Assuming category exists
-            PriceReference = 19.99m,
-            IsVisible = true
-        };
+        var itemDto = new ItemCreateRequest("Test Item", 
+            "Test Description",
+            1, // Assuming category exists
+            19.99m,
+            IsVisible: true);
 
         // Act
         var result = await CreateItem.Handle(_context, itemDto);
@@ -68,14 +64,7 @@ public class CreateItemTest
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
     {
         // Arrange
-        var itemDto = new ItemCreateDto
-        {
-            Name = "Test Item",
-            Description = "Test Description",
-            CategoryId = 1,
-            PriceReference = 19.99m,
-            IsVisible = true
-        };
+        var itemDto = new ItemCreateRequest("Test Item", "Test Description", 1, 19.99m, true);
 
         // Act - Simulate a database error by disposing the context
         await _context.DisposeAsync();
@@ -95,14 +84,12 @@ public class CreateItemTest
     public async Task Handle_ValidItemWithMinimalData_SuccessfullyCreatesItem()
     {
         // Arrange
-        var itemDto = new ItemCreateDto
-        {
-            Name = "Test Item",
-            Description = "", // Minimal description
-            CategoryId = 1,
-            PriceReference = 0m, // Minimum price
-            IsVisible = false // Non-default visibility
-        };
+        var itemDto = new ItemCreateRequest("Test Item", 
+            "", // Minimal description
+            1, 
+            0m, // Minimum price
+            false // Non-default visibility
+        );
 
         // Act
         var result = (await CreateItem.Handle(_context, itemDto)).Result;
@@ -130,23 +117,9 @@ public class CreateItemTest
     public async Task Handle_MultipleValidItems_CreatesAllSuccessfully()
     {
         // Arrange
-        var itemDto1 = new ItemCreateDto
-        {
-            Name = "Test Item 1",
-            Description = "Test Description 1",
-            CategoryId = 1,
-            PriceReference = 19.99m,
-            IsVisible = true
-        };
+        var itemDto1 = new ItemCreateRequest("Test Item 1", "Test Description 1", 1, 19.99m, true);
 
-        var itemDto2 = new ItemCreateDto
-        {
-            Name = "Test Item 2",
-            Description = "Test Description 2",
-            CategoryId = 2,
-            PriceReference = 29.99m,
-            IsVisible = false
-        };
+        var itemDto2 = new ItemCreateRequest("Test Item 2", "Test Description 2", 2, 29.99m, false);
 
         // Act
         var result1 = (await CreateItem.Handle(_context, itemDto1)).Result;
@@ -181,14 +154,7 @@ public class CreateItemTest
     {
         // Arrange
         var longDescription = new string('a', 5000); // Max length
-        var itemDto = new ItemCreateDto
-        {
-            Name = "Test Item",
-            Description = longDescription,
-            CategoryId = 1,
-            PriceReference = 19.99m,
-            IsVisible = true
-        };
+        var itemDto = new ItemCreateRequest("Test Item", longDescription, 1, 19.99m, true);
 
         // Act
         var result = (await CreateItem.Handle(_context, itemDto)).Result;

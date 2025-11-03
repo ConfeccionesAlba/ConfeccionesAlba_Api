@@ -1,7 +1,6 @@
 using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Filters;
-using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
 namespace ConfeccionesAlba_Api.Routes.Auth;
@@ -17,12 +16,12 @@ public static class AuthEndpointGroup
         group.MapPost("/login", LoginUser.Handle)
             .WithName(AuthEndpointNames.Login)
             .WithSummary("Login user")
-            .AddEndpointFilter<ValidationFilter<LoginRequestDto>>();
+            .AddEndpointFilter<ValidationFilter<LoginRequest>>();
 
         group.MapPost("/register", RegisterUser.Handle)
             .WithName(AuthEndpointNames.Register)
             .WithSummary("Register user")
-            .AddEndpointFilter<ValidationFilter<RegisterRequestDto>>()
+            .AddEndpointFilter<ValidationFilter<RegisterRequest>>()
             .RequireAuthorization(policy => policy.RequirePermission(Permissions.UsersCreate));
         
         return group;

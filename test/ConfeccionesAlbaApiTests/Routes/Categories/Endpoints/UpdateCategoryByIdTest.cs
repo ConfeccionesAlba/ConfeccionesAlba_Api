@@ -1,6 +1,5 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Categories;
 using ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -46,11 +45,7 @@ public class UpdateCategoryByIdTest
         await _context.Categories.AddAsync(testCategory);
         await _context.SaveChangesAsync();
 
-        var updateDto = new CategoryUpdateDto
-        {
-            Id = testCategory.Id,
-            Description = "Updated Description"
-        };
+        var updateDto = new CategoryUpdateRequest(testCategory.Id, "Updated Description");
 
         // Act
         var result = await UpdateCategoryById.Handle(_context, updateDto, testCategory.Id);
@@ -86,11 +81,8 @@ public class UpdateCategoryByIdTest
         await _context.Categories.AddAsync(testCategory);
         await _context.SaveChangesAsync();
 
-        var updateDto = new CategoryUpdateDto
-        {
-            Id = testCategory.Id + 1, // Mismatched ID
-            Description = "Updated Description"
-        };
+        var updateDto = new CategoryUpdateRequest(testCategory.Id + 1, // Mismatched ID
+            "Updated Description");
 
         // Act
         var result = await UpdateCategoryById.Handle(_context, updateDto, testCategory.Id);
@@ -110,11 +102,7 @@ public class UpdateCategoryByIdTest
     {
         // Arrange
         int nonExistentId = 999; // ID that doesn't exist in the database
-        var updateDto = new CategoryUpdateDto
-        {
-            Id = nonExistentId,
-            Description = "Updated Description"
-        };
+        var updateDto = new CategoryUpdateRequest(nonExistentId, "Updated Description");
 
         // Act
         var result = await UpdateCategoryById.Handle(_context, updateDto, nonExistentId);
@@ -136,11 +124,7 @@ public class UpdateCategoryByIdTest
         // Simulate a database error by disposing the context
         await _context.DisposeAsync();
 
-        var updateDto = new CategoryUpdateDto
-        {
-            Id = 1,
-            Description = "Updated Description"
-        };
+        var updateDto = new CategoryUpdateRequest(1, "Updated Description");
 
         // Act
         var result = await UpdateCategoryById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), updateDto, 1);
@@ -171,11 +155,8 @@ public class UpdateCategoryByIdTest
         await _context.Categories.AddAsync(testCategory);
         await _context.SaveChangesAsync();
 
-        var updateDto = new CategoryUpdateDto
-        {
-            Id = testCategory.Id,
-            Description = "" // Empty description
-        };
+        var updateDto = new CategoryUpdateRequest(testCategory.Id, "" // Empty description
+        );
 
         // Act
         var result = await UpdateCategoryById.Handle(_context, updateDto, testCategory.Id);
