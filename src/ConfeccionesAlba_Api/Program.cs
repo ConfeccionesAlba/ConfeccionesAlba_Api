@@ -1,6 +1,6 @@
 using System.Text;
 using ConfeccionesAlba_Api;
-using ConfeccionesAlba_Api.Common;
+using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Extensions;

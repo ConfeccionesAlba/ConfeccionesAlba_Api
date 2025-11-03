@@ -1,4 +1,4 @@
-namespace ConfeccionesAlba_Api.Common;
+namespace ConfeccionesAlba_Api.Authorization;
 
 public enum Permission
 {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace ConfeccionesAlba_Api.Common;
+namespace ConfeccionesAlba_Api.Authorization;
 
 public class PermissionAuthorizationRequirement(params string[] allowedPermissions)
     : AuthorizationHandler<PermissionAuthorizationRequirement>, IAuthorizationRequirement

@@ -1,4 +1,4 @@
-using ConfeccionesAlba_Api.Common;
+using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Filters;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;

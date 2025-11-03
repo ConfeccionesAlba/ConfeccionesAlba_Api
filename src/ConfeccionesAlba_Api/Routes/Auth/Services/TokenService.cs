@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Text;
-using ConfeccionesAlba_Api.Common;
+using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Identity;

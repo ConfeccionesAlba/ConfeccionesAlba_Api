@@ -1,4 +1,4 @@
-using ConfeccionesAlba_Api.Common;
+using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
