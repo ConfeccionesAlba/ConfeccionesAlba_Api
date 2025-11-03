@@ -1,14 +1,17 @@
 using System.Text;
 using ConfeccionesAlba_Api;
+using ConfeccionesAlba_Api.Authorization;
 using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Routes.Auth;
+using ConfeccionesAlba_Api.Routes.Auth.Services;
 using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +37,7 @@ builder.Services.AddLogging(loggingBuilder =>
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 // Setup JwtBearer
-builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
 var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
                   throw new InvalidOperationException("Missing configuration settings");
@@ -59,9 +62,18 @@ builder.Services.AddAuthentication(u =>
     };
 });
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy(Policy.AdminOnly, policy => policy.RequireRole(UserRoles.Admin))
-    .AddPolicy(Policy.PublisherOnly, policy => policy.RequireRole(UserRoles.Publisher));
+builder.Services.AddAuthorization(options =>
+{
+    foreach (Permission p in Enum.GetValues(typeof(Permission)))
+    {
+        options.AddPolicy(p.ToName(), policy =>
+        {
+            policy.Requirements.Add(new PermissionAuthorizationRequirement(p.ToName()));
+        });
+    }
+});
+
+builder.Services.AddScoped<IClaimsTransformation, PermissionClaimsTransformation>();
 
 builder.Services.AddCors();
 
@@ -74,13 +86,14 @@ builder.Services.AddOpenApi(options =>
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.Services.AddScoped<TokenService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await services.EnsureNoPendingMigrationsOrFail();
-    await services.SeedRoles();
     await services.EnsureAdminUserAndRole();
 }
 

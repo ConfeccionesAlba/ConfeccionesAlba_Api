@@ -1,5 +1,6 @@
+using ConfeccionesAlba_Api.Authorization;
+using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Filters;
-using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Categories;
 using ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
@@ -20,18 +21,18 @@ public static class CategoriesEndpointGroup
         group.MapGet("/{id:int}", GetCategoryById.Handle)
             .WithName(CategoriesEndpointNames.GetCategoryById)
             .WithSummary("Get category by Id");
-        
+
         group.MapPost("/", CreateCategory.Handle)
             .WithName(CategoriesEndpointNames.CreateCategory)
             .WithSummary("Create new category")
             .AddEndpointFilter<ValidationFilter<CategoryCreateDto>>()
-            .RequireAuthorization(Policy.AdminOnly);
+            .RequireAuthorization(policy => policy.RequirePermission(Permission.CategoryCreate));
         
         group.MapPut("/{id:int}", UpdateCategoryById.Handle)
             .WithName(CategoriesEndpointNames.UpdateCategory)
             .WithSummary("Update category")
             .AddEndpointFilter<ValidationFilter<CategoryUpdateDto>>()
-            .RequireAuthorization(Policy.AdminOnly);
+            .RequireAuthorization(policy => policy.RequirePermission(Permission.CategoryUpdate));
         
         return group;
     }

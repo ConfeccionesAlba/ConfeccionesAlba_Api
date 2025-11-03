@@ -1,14 +1,9 @@
 using System.Net;
-using System.Security.Claims;
-using System.Text;
-using ConfeccionesAlba_Api.Configurations;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
+using ConfeccionesAlba_Api.Routes.Auth.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
@@ -16,12 +11,10 @@ public static class LoginUser
 {
     public static async
         Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(UserManager<ApplicationUser> userManager,
-            IConfiguration configuration, LoginRequestDto model)
+            TokenService tokenService, LoginRequestDto model)
     {
         var response = new ApiResponse();
-        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
-                          throw new InvalidOperationException("Missing configuration settings");
-
+        
         var userFromDb = await userManager.FindByEmailAsync(model.Email);
         if (userFromDb != null)
         {
@@ -34,31 +27,7 @@ public static class LoginUser
                 return TypedResults.BadRequest(response);
             }
 
-            var roles = await userManager.GetRolesAsync(userFromDb);
-           
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
-            var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-            List<Claim> claims =
-            [
-                new(JwtRegisteredClaimNames.Sub, userFromDb.Id),
-                new(JwtRegisteredClaimNames.Email, userFromDb.Email!),
-                new(JwtRegisteredClaimNames.Name, userFromDb.Name),
-                ..roles.Select(r => new Claim(ClaimTypes.Role, r)),
-            ];
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpirationInMinutes),
-                NotBefore = DateTime.UtcNow,
-                SigningCredentials = credentials,
-                Issuer = jwtSettings.Issuer,
-                Audience = jwtSettings.Audience,
-            };
-
-            var tokenHandler = new JsonWebTokenHandler();
-            
-            var accessToken = tokenHandler.CreateToken(tokenDescriptor);
+            var accessToken = await tokenService.GenerateTokenAsync(userFromDb);
 
             var loginResponse = new LoginResponseDto { Token = accessToken };
 

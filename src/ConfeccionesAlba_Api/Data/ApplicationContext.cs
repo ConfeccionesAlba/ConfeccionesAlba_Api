@@ -1,3 +1,4 @@
+using ConfeccionesAlba_Api.Data.Extensions;
 using ConfeccionesAlba_Api.Data.Interceptors;
 using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -7,9 +8,16 @@ namespace ConfeccionesAlba_Api.Data;
 
 public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
 {
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Category> Categories { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());
 
-    public DbSet<Item> Items { get; set; }
-    public DbSet<Category> Categories { get; set; }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        builder.SeedIdentityData();
+    }
 }

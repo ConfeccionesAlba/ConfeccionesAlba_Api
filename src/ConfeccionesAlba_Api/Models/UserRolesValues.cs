@@ -1,6 +1,6 @@
 namespace ConfeccionesAlba_Api.Models;
 
-public static class UserRoles
+public static class UserRolesValues
 {
     public const string Admin = "Admin";
     public const string Publisher = "Publisher";

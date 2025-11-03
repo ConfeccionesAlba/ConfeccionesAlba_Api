@@ -1,5 +1,6 @@
+using ConfeccionesAlba_Api.Authorization;
+using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Filters;
-using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Items;
 using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
@@ -25,13 +26,13 @@ public static class ItemEndpointGroup
             .WithName(ItemsEndpointNames.CreateItem)
             .WithSummary("Create new item")
             .AddEndpointFilter<ValidationFilter<ItemCreateDto>>()
-            .RequireAuthorization(Policy.PublisherOnly);
-        
+            .RequireAuthorization(policy => policy.RequirePermission(Permission.ItemCreate));
+
         group.MapPut("/{id:int}", UpdateItemById.Handle)
             .WithName(ItemsEndpointNames.UpdateItem)
             .WithSummary("Update item")
             .AddEndpointFilter<ValidationFilter<ItemUpdateDto>>()
-            .RequireAuthorization(Policy.PublisherOnly);
+            .RequireAuthorization(policy => policy.RequirePermission(Permission.ItemUpdate));
         
         return group;
     }
