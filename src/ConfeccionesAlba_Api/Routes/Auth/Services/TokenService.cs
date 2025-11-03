@@ -32,15 +32,12 @@ public class TokenService(
             permissions.AddRange(claims.Where(c => c.Type == CustomClaimTypes.Permission).Select(c => c.Value));
         }
 
-        var distinctPermissions = permissions.Distinct();
-
         List<Claim> claimsList =
         [
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.Email, user.Email!),
             new(JwtRegisteredClaimNames.Name, user.Name),
             ..roles.Select(r => new Claim(ClaimTypes.Role, r)),
-            ..distinctPermissions.Select(p => new Claim(CustomClaimTypes.Permission, p))
         ];
 
         var tokenDescriptor = new SecurityTokenDescriptor
