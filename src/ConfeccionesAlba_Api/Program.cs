@@ -11,6 +11,7 @@ using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Utils;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,8 @@ builder.Services.AddAuthorization(options =>
         });
     }
 });
+
+builder.Services.AddScoped<IClaimsTransformation, PermissionClaimsTransformation>();
 
 builder.Services.AddCors();
 
