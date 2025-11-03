@@ -64,7 +64,7 @@ builder.Services.AddAuthentication(u =>
 
 builder.Services.AddAuthorization(options =>
 {
-    foreach (Permission p in Enum.GetValues(typeof(Permission)))
+    foreach (Permissions p in Enum.GetValues(typeof(Permissions)))
     {
         options.AddPolicy(p.ToName(), policy =>
         {

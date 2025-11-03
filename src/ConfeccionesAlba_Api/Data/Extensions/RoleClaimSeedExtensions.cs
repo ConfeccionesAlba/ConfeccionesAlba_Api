@@ -14,27 +14,27 @@ public static class RoleClaimSeedExtensions
 
         builder.Entity<IdentityRoleClaim<string>>().HasData(
             // Admin Role
-            new IdentityRoleClaim<string> { Id = 1001, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.UsersRead.ToName() },
-            new IdentityRoleClaim<string> { Id = 1002, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.UsersCreate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1003, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.UsersUpdate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1004, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.UsersDelete.ToName() },
+            new IdentityRoleClaim<string> { Id = 1001, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.UsersRead.ToName() },
+            new IdentityRoleClaim<string> { Id = 1002, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.UsersCreate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1003, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.UsersUpdate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1004, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.UsersDelete.ToName() },
 
-            new IdentityRoleClaim<string> { Id = 1005, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryCreate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1006, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryUpdate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1007, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryDelete.ToName() },
+            new IdentityRoleClaim<string> { Id = 1005, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesCreate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1006, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesUpdate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1007, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesDelete.ToName() },
 
-            new IdentityRoleClaim<string> { Id = 1008, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemCreate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1009, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemUpdate.ToName() },
-            new IdentityRoleClaim<string> { Id = 1010, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemDelete.ToName() },
+            new IdentityRoleClaim<string> { Id = 1008, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsCreate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1009, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsUpdate.ToName() },
+            new IdentityRoleClaim<string> { Id = 1010, RoleId = adminRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsDelete.ToName() },
 
             // Publisher Role
-            new IdentityRoleClaim<string> { Id = 2001, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryCreate.ToName() },
-            new IdentityRoleClaim<string> { Id = 2002, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryUpdate.ToName() },
-            new IdentityRoleClaim<string> { Id = 2003, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.CategoryDelete.ToName() },
+            new IdentityRoleClaim<string> { Id = 2001, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesCreate.ToName() },
+            new IdentityRoleClaim<string> { Id = 2002, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesUpdate.ToName() },
+            new IdentityRoleClaim<string> { Id = 2003, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.CategoriesDelete.ToName() },
 
-            new IdentityRoleClaim<string> { Id = 2004, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemCreate.ToName() },
-            new IdentityRoleClaim<string> { Id = 2005, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemUpdate.ToName() },
-            new IdentityRoleClaim<string> { Id = 2006, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permission.ItemDelete.ToName() }
+            new IdentityRoleClaim<string> { Id = 2004, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsCreate.ToName() },
+            new IdentityRoleClaim<string> { Id = 2005, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsUpdate.ToName() },
+            new IdentityRoleClaim<string> { Id = 2006, RoleId = publisherRoleId, ClaimType = CustomClaimTypes.Permission, ClaimValue = Permissions.ItemsDelete.ToName() }
         );
     }
 }
