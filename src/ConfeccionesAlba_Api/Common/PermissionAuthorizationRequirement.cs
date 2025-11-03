@@ -11,18 +11,19 @@ public class PermissionAuthorizationRequirement(params string[] allowedPermissio
         AuthorizationHandlerContext context,
         PermissionAuthorizationRequirement requirement)
     {
-        foreach (var permission in requirement.AllowedPermissions)
+        if (requirement.AllowedPermissions.Any(permission => PermissionIsFound(context, permission)))
         {
-            var found = context.User.FindFirst(claim =>
-                claim.Type == CustomClaimTypes.Permission &&
-                claim.Value == permission) is not null;
-
-            if (found)
-            {
-                context.Succeed(requirement);
-                break;
-            }
+            context.Succeed(requirement);
         }
+
         return Task.CompletedTask;
+    }
+
+    private static bool PermissionIsFound(AuthorizationHandlerContext context, string permission)
+    {
+        var found = context.User.FindFirst(claim =>
+            claim.Type == CustomClaimTypes.Permission &&
+            claim.Value == permission) is not null;
+        return found;
     }
 }

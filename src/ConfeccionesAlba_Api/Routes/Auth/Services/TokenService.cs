@@ -10,33 +10,25 @@ using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredCla
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Services;
 
-public class TokenService
+public class TokenService(
+    UserManager<ApplicationUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    IConfiguration configuration)
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IConfiguration _configuration;
-
-    public TokenService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _configuration = configuration;
-    }
-
     public async Task<string> GenerateTokenAsync(ApplicationUser user)
     {
-        var jwtSettings = _configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
                           throw new InvalidOperationException("Missing configuration settings");
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey));
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await userManager.GetRolesAsync(user);
         var permissions = new List<string>();
 
         foreach (var roleName in roles)
         {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            var claims = await _roleManager.GetClaimsAsync(role);
+            var role = await roleManager.FindByNameAsync(roleName);
+            var claims = await roleManager.GetClaimsAsync(role);
             permissions.AddRange(claims.Where(c => c.Type == CustomClaimTypes.Permission).Select(c => c.Value));
         }
 
