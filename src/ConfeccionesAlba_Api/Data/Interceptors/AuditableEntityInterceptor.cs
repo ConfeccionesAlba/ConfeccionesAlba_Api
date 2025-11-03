@@ -16,6 +16,28 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
             return base.SavingChanges(eventData, result);
         }
         
+        UpdateAuditableEntities(dbContext);
+
+        return base.SavingChanges(eventData, result);
+    }
+
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, 
+        InterceptionResult<int> result, CancellationToken cancellationToken = new())
+    {
+        var dbContext = eventData.Context;
+
+        if (dbContext == null)
+        {
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+        
+        UpdateAuditableEntities(dbContext);
+        
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private static void UpdateAuditableEntities(DbContext dbContext)
+    {
         foreach (var entry in dbContext.ChangeTracker.Entries().Where(IsAddedOrModified))
         {
             var currentTime = DateTime.UtcNow;
@@ -35,15 +57,6 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
                 auditable.UpdatedOn = currentTime;
             }
         }
-
-        return base.SavingChanges(eventData, result);
-    }
-
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, 
-        InterceptionResult<int> result, CancellationToken cancellationToken = new())
-    {
-        SavingChanges(eventData, result);
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     private static bool IsAddedOrModified(EntityEntry e)
