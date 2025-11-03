@@ -18,22 +18,6 @@ public static class ServiceProviderExtensions
         }
     }
 
-    public static async Task SeedRoles(this IServiceProvider serviceProvider)
-    {
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-        var roles = new[] { UserRolesValues.Admin, UserRolesValues.Publisher, UserRolesValues.Customer };
-
-        foreach (var role in roles)
-        {
-            var roleExists = await roleManager.RoleExistsAsync(role);
-            if (!roleExists)
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
-    }
-
     public static async Task EnsureAdminUserAndRole(this IServiceProvider serviceProvider)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
