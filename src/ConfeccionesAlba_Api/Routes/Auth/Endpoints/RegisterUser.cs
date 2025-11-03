@@ -28,7 +28,7 @@ public static class RegisterUser
             var result = await userManager.CreateAsync(newUser, model.Password);
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(newUser, UserRoles.Publisher);
+                await userManager.AddToRoleAsync(newUser, UserRolesValues.Publisher);
                 await transaction.CommitAsync();
 
                 response.StatusCode = HttpStatusCode.OK;

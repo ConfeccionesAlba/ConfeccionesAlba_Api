@@ -22,7 +22,7 @@ public static class ServiceProviderExtensions
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        var roles = new[] { UserRoles.Admin, UserRoles.Publisher, UserRoles.Customer };
+        var roles = new[] { UserRolesValues.Admin, UserRolesValues.Publisher, UserRolesValues.Customer };
 
         foreach (var role in roles)
         {
@@ -59,7 +59,7 @@ public static class ServiceProviderExtensions
             var result = await userManager.CreateAsync(adminUser, adminPassword);
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(adminUser, UserRoles.Admin);
+                await userManager.AddToRoleAsync(adminUser, UserRolesValues.Admin);
             }
             else
             {
