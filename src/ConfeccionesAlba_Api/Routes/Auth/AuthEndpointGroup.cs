@@ -23,7 +23,7 @@ public static class AuthEndpointGroup
             .WithName(AuthEndpointNames.Register)
             .WithSummary("Register user")
             .AddEndpointFilter<ValidationFilter<RegisterRequestDto>>()
-            .RequireAuthorization(policy => policy.RequirePermission(Permission.UsersCreate));
+            .RequireAuthorization(policy => policy.RequirePermission(Permissions.UsersCreate));
         
         return group;
     }

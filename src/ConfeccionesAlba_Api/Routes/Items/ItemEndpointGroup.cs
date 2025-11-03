@@ -26,13 +26,13 @@ public static class ItemEndpointGroup
             .WithName(ItemsEndpointNames.CreateItem)
             .WithSummary("Create new item")
             .AddEndpointFilter<ValidationFilter<ItemCreateDto>>()
-            .RequireAuthorization(policy => policy.RequirePermission(Permission.ItemCreate));
+            .RequireAuthorization(policy => policy.RequirePermission(Permissions.ItemsCreate));
 
         group.MapPut("/{id:int}", UpdateItemById.Handle)
             .WithName(ItemsEndpointNames.UpdateItem)
             .WithSummary("Update item")
             .AddEndpointFilter<ValidationFilter<ItemUpdateDto>>()
-            .RequireAuthorization(policy => policy.RequirePermission(Permission.ItemUpdate));
+            .RequireAuthorization(policy => policy.RequirePermission(Permissions.ItemsUpdate));
         
         return group;
     }

@@ -5,18 +5,18 @@ namespace ConfeccionesAlba_Api.Extensions;
 
 public static class PermissionExtensions
 {
-    public static string ToName(this Permission p) => p switch
+    public static string ToName(this Permissions p) => p switch
     {
-        Permission.UsersRead => "users:read",
-        Permission.UsersCreate => "users:create",
-        Permission.UsersUpdate => "users:update",
-        Permission.UsersDelete => "users:delete",
-        Permission.CategoryCreate => "category:create",
-        Permission.CategoryUpdate => "category:update",
-        Permission.CategoryDelete => "category:delete",
-        Permission.ItemCreate => "item:create",
-        Permission.ItemUpdate => "item:update",
-        Permission.ItemDelete => "item:delete",
+        Permissions.UsersRead => "users:read",
+        Permissions.UsersCreate => "users:create",
+        Permissions.UsersUpdate => "users:update",
+        Permissions.UsersDelete => "users:delete",
+        Permissions.CategoriesCreate => "categories:create",
+        Permissions.CategoriesUpdate => "categories:update",
+        Permissions.CategoriesDelete => "categories:delete",
+        Permissions.ItemsCreate => "items:create",
+        Permissions.ItemsUpdate => "items:update",
+        Permissions.ItemsDelete => "items:delete",
         _ => throw new ArgumentOutOfRangeException(nameof(p))
     };
     
@@ -25,7 +25,7 @@ public static class PermissionExtensions
         builder.AddRequirements(new PermissionAuthorizationRequirement(allowedPermissions));
     }
     
-    public static void RequirePermission(this AuthorizationPolicyBuilder builder, params Permission[] allowedPermissions)
+    public static void RequirePermission(this AuthorizationPolicyBuilder builder, params Permissions[] allowedPermissions)
     {
         var permissions = allowedPermissions.Select(p => p.ToName()).ToArray();
         builder.AddRequirements(new PermissionAuthorizationRequirement(permissions));

@@ -26,13 +26,13 @@ public static class CategoriesEndpointGroup
             .WithName(CategoriesEndpointNames.CreateCategory)
             .WithSummary("Create new category")
             .AddEndpointFilter<ValidationFilter<CategoryCreateDto>>()
-            .RequireAuthorization(policy => policy.RequirePermission(Permission.CategoryCreate));
+            .RequireAuthorization(policy => policy.RequirePermission(Permissions.CategoriesCreate));
         
         group.MapPut("/{id:int}", UpdateCategoryById.Handle)
             .WithName(CategoriesEndpointNames.UpdateCategory)
             .WithSummary("Update category")
             .AddEndpointFilter<ValidationFilter<CategoryUpdateDto>>()
-            .RequireAuthorization(policy => policy.RequirePermission(Permission.CategoryUpdate));
+            .RequireAuthorization(policy => policy.RequirePermission(Permissions.CategoriesUpdate));
         
         return group;
     }
