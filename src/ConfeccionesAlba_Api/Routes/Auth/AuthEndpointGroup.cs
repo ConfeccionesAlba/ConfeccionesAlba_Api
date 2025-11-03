@@ -1,5 +1,6 @@
+using ConfeccionesAlba_Api.Common;
+using ConfeccionesAlba_Api.Extensions;
 using ConfeccionesAlba_Api.Filters;
-using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
@@ -22,7 +23,7 @@ public static class AuthEndpointGroup
             .WithName(AuthEndpointNames.Register)
             .WithSummary("Register user")
             .AddEndpointFilter<ValidationFilter<RegisterRequestDto>>()
-            .RequireAuthorization(Policy.AdminOnly);
+            .RequireAuthorization(policy => policy.RequirePermission(Permission.UsersCreate));
         
         return group;
     }
