@@ -1,6 +1,5 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Items;
 using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -51,14 +50,7 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with updated values
-        var updateDto = new ItemUpdateDto
-        {
-            Id = testItem.Id,
-            Description = "Updated description",
-            CategoryId = 2,
-            PriceReference = 15.99m,
-            IsVisible = false
-        };
+        var updateDto = new ItemUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
 
         // Act
         var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);
@@ -101,14 +93,11 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with mismatched ID
-        var updateDto = new ItemUpdateDto
-        {
-            Id = testItem.Id + 1, // Mismatched ID
-            Description = "Updated description",
-            CategoryId = 2,
-            PriceReference = 15.99m,
-            IsVisible = false
-        };
+        var updateDto = new ItemUpdateRequest(testItem.Id + 1, // Mismatched ID
+            "Updated description", 
+            2, 
+            15.99m,
+            false);
 
         // Act
         var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);
@@ -128,14 +117,11 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create update DTO for non-existent item
-        var updateDto = new ItemUpdateDto
-        {
-            Id = 999, // Non-existent ID
-            Description = "Updated description",
-            CategoryId = 2,
-            PriceReference = 15.99m,
-            IsVisible = false
-        };
+        var updateDto = new ItemUpdateRequest(999, // Non-existent ID
+            "Updated description", 
+            2, 
+            15.99m, 
+            false);
 
         // Act
         var result = await UpdateItemById.Handle(_context, updateDto, 999);
@@ -171,14 +157,7 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO
-        var updateDto = new ItemUpdateDto
-        {
-            Id = testItem.Id,
-            Description = "Updated description",
-            CategoryId = 2,
-            PriceReference = 15.99m,
-            IsVisible = false
-        };
+        var updateDto = new ItemUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
 
         // Simulate database error by disposing the context
         await _context.DisposeAsync();
@@ -217,14 +196,12 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with only some fields updated
-        var updateDto = new ItemUpdateDto
-        {
-            Id = testItem.Id,
-            Description = "Updated description", // Only updating description
-            CategoryId = testItem.CategoryId, // Keeping category same
-            PriceReference = testItem.PriceReference, // Keeping price same
-            IsVisible = testItem.IsVisible // Keeping visibility same
-        };
+        var updateDto = new ItemUpdateRequest(testItem.Id,
+            "Updated description", // Only updating description
+            testItem.CategoryId, // Keeping category same
+            testItem.PriceReference, // Keeping price same
+            testItem.IsVisible // Keeping visibility same
+        );
 
         // Act
         var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);

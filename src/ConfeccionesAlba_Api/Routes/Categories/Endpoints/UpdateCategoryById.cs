@@ -1,18 +1,19 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Categories;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
+public record CategoryUpdateRequest(int Id, string Description);
+
 public static class UpdateCategoryById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryUpdateDto categoryDto, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryUpdateRequest categoryRequest, int id)
     {
         var response = new ApiResponse();
 
-        if (categoryDto.Id != id)
+        if (categoryRequest.Id != id)
         {
             response.IsSuccess = false;
             response.StatusCode = HttpStatusCode.BadRequest;
@@ -33,9 +34,9 @@ public static class UpdateCategoryById
                 return TypedResults.NotFound(response);
             }
 
-            if (!string.IsNullOrEmpty(categoryDto.Description))
+            if (!string.IsNullOrEmpty(categoryRequest.Description))
             {
-                categoryFromDb.Description = categoryDto.Description;
+                categoryFromDb.Description = categoryRequest.Description;
             }
 
             await db.SaveChangesAsync();

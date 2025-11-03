@@ -1,10 +1,11 @@
+using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using FluentValidation;
 
-namespace ConfeccionesAlba_Api.Models.Dtos.Items.Validators;
+namespace ConfeccionesAlba_Api.Routes.Items.Validators;
 
-public class ItemCreateDtoValidator : AbstractValidator<ItemCreateDto>
+public class ItemCreateRequestValidator : AbstractValidator<ItemCreateRequest>
 {
-    public ItemCreateDtoValidator()
+    public ItemCreateRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(250);
         RuleFor(x => x.Description).NotEmpty().MaximumLength(5000);

@@ -1,14 +1,13 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Categories;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 public static class CreateCategory
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryCreateDto categoryDto)
+    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryCreateRequest categoryRequest)
     {
         var response = new ApiResponse();
         
@@ -16,8 +15,8 @@ public static class CreateCategory
         {
             var category = new Category
             {
-                Name = categoryDto.Name,
-                Description = categoryDto.Description,
+                Name = categoryRequest.Name,
+                Description = categoryRequest.Description,
             };
 
             db.Categories.Add(category);

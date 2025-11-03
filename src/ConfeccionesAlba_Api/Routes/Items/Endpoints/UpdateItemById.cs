@@ -1,18 +1,19 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Items;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
+public record ItemUpdateRequest(int Id, string Description, int CategoryId, decimal PriceReference, bool IsVisible);
+
 public static class UpdateItemById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemUpdateDto itemDto, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, ItemUpdateRequest itemRequest, int id)
     {
         var response = new ApiResponse();
 
-        if (itemDto.Id != id)
+        if (itemRequest.Id != id)
         {
             response.IsSuccess = false;
             response.StatusCode = HttpStatusCode.BadRequest;
@@ -33,18 +34,18 @@ public static class UpdateItemById
                 return TypedResults.NotFound(response);
             }
 
-            if (!string.IsNullOrEmpty(itemDto.Description))
+            if (!string.IsNullOrEmpty(itemRequest.Description))
             {
-                itemFromDb.Description = itemDto.Description;
+                itemFromDb.Description = itemRequest.Description;
             }
 
-            itemFromDb.CategoryId = itemDto.CategoryId;
+            itemFromDb.CategoryId = itemRequest.CategoryId;
             
-            itemFromDb.PriceReference = itemDto.PriceReference;
+            itemFromDb.PriceReference = itemRequest.PriceReference;
 
-            if (itemFromDb.IsVisible != itemDto.IsVisible)
+            if (itemFromDb.IsVisible != itemRequest.IsVisible)
             {
-                itemFromDb.IsVisible = itemDto.IsVisible;
+                itemFromDb.IsVisible = itemRequest.IsVisible;
             }
 
             await db.SaveChangesAsync();

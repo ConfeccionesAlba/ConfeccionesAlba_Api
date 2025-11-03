@@ -1,13 +1,12 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Categories;
-using ConfeccionesAlba_Api.Models.Dtos.Categories.Validators;
 using ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Categories;
 
 namespace ConfeccionesAlbaApiTests.Routes.Categories.Endpoints;
 
@@ -35,11 +34,7 @@ public class CreateCategoryTest
     public async Task Handle_SuccessfulCategoryCreation_ReturnsCreatedAtRoute()
     {
         // Arrange
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = "Test Category",
-            Description = "Test Description"
-        };
+        var categoryDto = new CategoryCreateRequest("Test Category", "Test Description");
 
         // Act
         var result = await CreateCategory.Handle(_context, categoryDto);
@@ -63,11 +58,7 @@ public class CreateCategoryTest
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
     {
         // Arrange
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = "Test Category",
-            Description = "Test Description"
-        };
+        var categoryDto = new CategoryCreateRequest("Test Category", "Test Description");
     
         // Act - Simulate a database error by disposing the context
         await _context.DisposeAsync();
@@ -86,11 +77,9 @@ public class CreateCategoryTest
     public async Task Handle_ValidCategoryWithEmptyDescription_SuccessfullyCreatesCategory()
     {
         // Arrange
-        var categoryDto = new CategoryCreateDto
-        {
-            Name = "Test Category",
-            Description = "" // Empty description should be allowed
-        };
+        var categoryDto = new CategoryCreateRequest("Test Category",
+            "" // Empty description should be allowed
+        );
     
         // Act
         var result = await CreateCategory.Handle(_context, categoryDto);
@@ -114,17 +103,9 @@ public class CreateCategoryTest
     public async Task Handle_MultipleValidCategories_CreatesAllSuccessfully()
     {
         // Arrange
-        var categoryDto1 = new CategoryCreateDto
-        {
-            Name = "Test Category 1",
-            Description = "Test Description 1"
-        };
+        var categoryDto1 = new CategoryCreateRequest("Test Category 1", "Test Description 1");
     
-        var categoryDto2 = new CategoryCreateDto
-        {
-            Name = "Test Category 2",
-            Description = "Test Description 2"
-        };
+        var categoryDto2 = new CategoryCreateRequest("Test Category 2", "Test Description 2");
     
         // Act
         var result1 = await CreateCategory.Handle(_context, categoryDto1);

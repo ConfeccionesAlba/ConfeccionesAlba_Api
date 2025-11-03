@@ -1,17 +1,20 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Models.Dtos.Auth;
 using ConfeccionesAlba_Api.Routes.Auth.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 
 namespace ConfeccionesAlba_Api.Routes.Auth.Endpoints;
 
+public record LoginRequest(string Email, string Password);
+
+public record LoginResponse(string Token);
+
 public static class LoginUser
 {
     public static async
         Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(UserManager<ApplicationUser> userManager,
-            TokenService tokenService, LoginRequestDto model)
+            TokenService tokenService, LoginRequest model)
     {
         var response = new ApiResponse();
         
@@ -29,7 +32,7 @@ public static class LoginUser
 
             var accessToken = await tokenService.GenerateTokenAsync(userFromDb);
 
-            var loginResponse = new LoginResponseDto { Token = accessToken };
+            var loginResponse = new LoginResponse(accessToken);
 
             response.Result = loginResponse;
             response.StatusCode = HttpStatusCode.OK;
