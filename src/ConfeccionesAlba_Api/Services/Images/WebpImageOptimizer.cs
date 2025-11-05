@@ -1,10 +1,11 @@
+using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 
 namespace ConfeccionesAlba_Api.Services.Images;
 
-public class ImagesOptimizer
+public class WebpImageOptimizer : IImageOptimizer
 {
     public async Task<byte[]> OptimizeAsync(Stream inputStream, int maxWidth = 1280, int quality = 85)
     {
