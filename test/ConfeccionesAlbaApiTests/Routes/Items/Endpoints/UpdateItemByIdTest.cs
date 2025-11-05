@@ -40,7 +40,6 @@ public class UpdateItemByIdTest
             Description = "Original description",
             CategoryId = 1,
             PriceReference = 10.99m,
-            ImageUrl = "test.jpg",
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow
@@ -83,7 +82,6 @@ public class UpdateItemByIdTest
             Description = "Original description",
             CategoryId = 1,
             PriceReference = 10.99m,
-            ImageUrl = "test.jpg",
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow
@@ -147,7 +145,6 @@ public class UpdateItemByIdTest
             Description = "Original description",
             CategoryId = 1,
             PriceReference = 10.99m,
-            ImageUrl = "test.jpg",
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow
@@ -186,7 +183,6 @@ public class UpdateItemByIdTest
             Description = "Original description",
             CategoryId = 1,
             PriceReference = 10.99m,
-            ImageUrl = "test.jpg",
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow

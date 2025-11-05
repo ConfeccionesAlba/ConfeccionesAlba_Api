@@ -10,12 +10,15 @@ public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<
 {
     public DbSet<Item> Items { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Image> Images { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        
         base.OnModelCreating(builder);
         
         builder.SeedIdentityData();

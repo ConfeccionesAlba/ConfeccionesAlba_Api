@@ -24,7 +24,10 @@ public class Item : IAuditableEntity
     
     public decimal PriceReference { get; set; }
     
-    public string ImageUrl { get; set; } = string.Empty;
+    public int? ImageId { get; set; }
+    
+    [ForeignKey("ImageId")]
+    public Image? Image { get; set; }
     
     public bool IsVisible { get; set; } = true;
 
