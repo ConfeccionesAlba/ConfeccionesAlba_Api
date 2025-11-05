@@ -12,4 +12,6 @@ public enum Permissions
     ItemsCreate,
     ItemsUpdate,
     ItemsDelete,
+    ImagesCreate,
+    ImagesDelete,
 }
