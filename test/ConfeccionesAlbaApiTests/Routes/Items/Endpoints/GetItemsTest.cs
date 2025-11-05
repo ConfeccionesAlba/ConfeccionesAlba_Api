@@ -61,7 +61,6 @@ public class GetItemsTest
                 Description = "Test Description 1",
                 CategoryId = 1,
                 PriceReference = 10.99m,
-                ImageUrl = "test1.jpg",
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow
@@ -72,7 +71,6 @@ public class GetItemsTest
                 Description = "Test Description 2",
                 CategoryId = 2,
                 PriceReference = 20.99m,
-                ImageUrl = "test2.jpg",
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow
@@ -102,14 +100,12 @@ public class GetItemsTest
         firstItem.Name.Should().Be("Test Item 1");
         firstItem.Description.Should().Be("Test Description 1");
         firstItem.PriceReference.Should().Be(10.99m);
-        firstItem.ImageUrl.Should().Be("test1.jpg");
 
         // Verify the second item
         var secondItem = items[1];
         secondItem.Name.Should().Be("Test Item 2");
         secondItem.Description.Should().Be("Test Description 2");
         secondItem.PriceReference.Should().Be(20.99m);
-        secondItem.ImageUrl.Should().Be("test2.jpg");
     }
 
     [Test]

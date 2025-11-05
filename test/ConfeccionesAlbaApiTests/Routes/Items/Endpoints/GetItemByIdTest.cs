@@ -78,7 +78,6 @@ public class GetItemByIdTest
             Description = "Test Description",
             CategoryId = 1,
             PriceReference = 10.99m,
-            ImageUrl = "test.jpg",
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
             UpdatedOn = DateTime.UtcNow
@@ -105,7 +104,6 @@ public class GetItemByIdTest
         returnedItem.Name.Should().Be(testItem.Name);
         returnedItem.Description.Should().Be(testItem.Description);
         returnedItem.PriceReference.Should().Be(testItem.PriceReference);
-        returnedItem.ImageUrl.Should().Be(testItem.ImageUrl);
         returnedItem.IsVisible.Should().Be(testItem.IsVisible);
     }
 
