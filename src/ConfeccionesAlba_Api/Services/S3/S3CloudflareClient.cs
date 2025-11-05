@@ -25,12 +25,12 @@ public class S3CloudflareClient : IS3Client
     
     public async Task<string> UploadImage(FileUploadRequest file)
     {
-        _logger.LogInformation("New file {FileName} to upload to S3 bucket {BucketName}", file.FileName, _options.BucketName);
+        _logger.LogInformation("New file {FileName} to upload to S3 bucket {BucketName}", file.Key, _options.BucketName);
         
         var request = new PutObjectRequest
         {
             BucketName = _options.BucketName,
-            Key = file.FileName,
+            Key = file.Key,
             InputStream = file.FileStream,
             ContentType = file.ContentType,
             DisablePayloadSigning = true
@@ -45,33 +45,33 @@ public class S3CloudflareClient : IS3Client
         }
         
         if (Uri.TryCreate(_options.PublicUrl, UriKind.Absolute, out var baseUri) &&
-            Uri.TryCreate(baseUri, file.FileName, out var finalUri))
+            Uri.TryCreate(baseUri, file.Key, out var finalUri))
         {
             return finalUri.ToString();
         }
         
-        _logger.LogError("Error formating public url: {PublicUri}, {ImageFile}", _options.PublicUrl, file.FileName);
+        _logger.LogError("Error formating public url: {PublicUri}, {ImageFile}", _options.PublicUrl, file.Key);
         throw new S3Exception("Failed to format public url");
     }
 
-    public async Task RemoveImage(string imageName)
+    public async Task RemoveImage(string key)
     {
-            _logger.LogInformation("Deleting file {Key} from R2 bucket {BucketName}", imageName, _options.BucketName);
+            _logger.LogInformation("Deleting file {Key} from R2 bucket {BucketName}", key, _options.BucketName);
             var deleteRequest = new DeleteObjectRequest
             {
                 BucketName = _options.BucketName,
-                Key = imageName,
+                Key = key,
             };
             
             var response = await _s3Client.DeleteObjectAsync(deleteRequest);
             if (response.HttpStatusCode != HttpStatusCode.NoContent)
             {
                 _logger.LogError("Failed to delete file {Key} from R2 bucket {BucketName}. Status code: {StatusCode}",
-                    imageName, _options.BucketName, response.HttpStatusCode);
+                    key, _options.BucketName, response.HttpStatusCode);
 
                 throw new S3Exception("Failed to delete file");
             }
 
-            _logger.LogInformation("File {Key} deleted successfully from R2 bucket {BucketName}", imageName, _options.BucketName);
+            _logger.LogInformation("File {Key} deleted successfully from R2 bucket {BucketName}", key, _options.BucketName);
     }
 }
