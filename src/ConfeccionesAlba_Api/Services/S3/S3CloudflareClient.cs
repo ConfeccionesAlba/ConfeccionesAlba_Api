@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace ConfeccionesAlba_Api.Services.S3;
 
-public class S3CloudflareClient : IS3Client
+public sealed class S3CloudflareClient : IS3Client, IDisposable
 {
     private readonly R2Options _options;
     private readonly ILogger<S3CloudflareClient> _logger;
@@ -73,5 +73,10 @@ public class S3CloudflareClient : IS3Client
             }
 
             _logger.LogInformation("File {Key} deleted successfully from R2 bucket {BucketName}", key, _options.BucketName);
+    }
+
+    public void Dispose()
+    {
+        _s3Client.Dispose();
     }
 }
