@@ -9,6 +9,8 @@ using ConfeccionesAlba_Api.Routes.Auth;
 using ConfeccionesAlba_Api.Routes.Auth.Services;
 using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
+using ConfeccionesAlba_Api.Services.S3;
+using ConfeccionesAlba_Api.Services.S3.Interfaces;
 using ConfeccionesAlba_Api.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -35,6 +37,7 @@ builder.Services.AddLogging(loggingBuilder =>
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddScoped<TokenService>();
 
 // Setup JwtBearer
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -83,10 +86,12 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
+// Setup Cloudflare R2 service
+builder.Services.Configure<R2Options>(builder.Configuration.GetSection("Cloudflare:R2"));
+builder.Services.AddScoped<IS3Client, S3CloudflareClient>();
+
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-builder.Services.AddScoped<TokenService>();
 
 var app = builder.Build();
 
