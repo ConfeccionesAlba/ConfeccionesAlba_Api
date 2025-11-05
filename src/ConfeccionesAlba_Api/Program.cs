@@ -10,6 +10,7 @@ using ConfeccionesAlba_Api.Routes.Auth.Services;
 using ConfeccionesAlba_Api.Routes.Categories;
 using ConfeccionesAlba_Api.Routes.Items;
 using ConfeccionesAlba_Api.Services.Images;
+using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using ConfeccionesAlba_Api.Services.S3;
 using ConfeccionesAlba_Api.Services.S3.Interfaces;
 using ConfeccionesAlba_Api.Utils;
@@ -90,7 +91,8 @@ builder.Services.AddOpenApi(options =>
 // Setup Cloudflare R2 service
 builder.Services.Configure<R2Options>(builder.Configuration.GetSection("Cloudflare:R2"));
 builder.Services.AddScoped<IS3Client, S3CloudflareClient>();
-builder.Services.AddScoped<ImagesOptimizer>();
+builder.Services.AddScoped<IImageOptimizer, WebpImageOptimizer>();
+builder.Services.AddScoped<IImageProcessor, ImageProcessor>();
 
 // Setup validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
