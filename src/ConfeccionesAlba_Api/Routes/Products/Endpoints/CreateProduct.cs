@@ -5,9 +5,9 @@ using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
+namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public record ItemCreateRequest(
+public record ProductCreateRequest(
     [FromForm] string Name,
     [FromForm] string Description,
     [FromForm] int CategoryId,
@@ -15,16 +15,16 @@ public record ItemCreateRequest(
     [FromForm] bool IsVisible,
     [FromForm] IFormFile File);
 
-public static class CreateItem
+public static class CreateProduct
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ItemCreateRequest itemRequest)
+    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductCreateRequest productRequest)
     {
         var response = new ApiResponse();
         
         try
         {
             // Get file
-            var file = itemRequest.File;
+            var file = productRequest.File;
             
             var newFileName = $"{Guid.NewGuid()}.webp"; // TODO: Extract file extension from here
             
@@ -33,23 +33,23 @@ public static class CreateItem
             // Save to database
             var image = new Image { Name = newFileName, Url = url };
 
-            var newItem = new Product
+            var newProduct = new Product
             {
-                Name = itemRequest.Name,
-                Description = itemRequest.Description,
-                CategoryId = itemRequest.CategoryId,
-                PriceReference = itemRequest.PriceReference,
-                IsVisible = itemRequest.IsVisible,
+                Name = productRequest.Name,
+                Description = productRequest.Description,
+                CategoryId = productRequest.CategoryId,
+                PriceReference = productRequest.PriceReference,
+                IsVisible = productRequest.IsVisible,
                 Image = image,
             };
 
-            db.Products.Add(newItem);
+            db.Products.Add(newProduct);
             await db.SaveChangesAsync();
 
-            response.Result = newItem;
+            response.Result = newProduct;
             response.StatusCode = HttpStatusCode.Created;
 
-            return TypedResults.CreatedAtRoute(response, ItemsEndpointNames.GetItemById, new { newItem.Id });
+            return TypedResults.CreatedAtRoute(response, ProductsEndpointNames.GetProductById, new { newProduct.Id });
         }
         catch (Exception exception)
         {

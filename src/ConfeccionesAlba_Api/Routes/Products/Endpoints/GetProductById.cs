@@ -3,9 +3,9 @@ using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
+namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public static class GetItemById
+public static class GetProductById
 {
     public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, int id)
     {
@@ -15,24 +15,24 @@ public static class GetItemById
         {
             response.IsSuccess = false;
             response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.Add("Invalid item Id");
+            response.ErrorMessages.Add("Invalid Product Id");
             return TypedResults.BadRequest(response);
         }
         
         try
         {
-            var item = await db.Products.FindAsync(id);
+            var product = await db.Products.FindAsync(id);
             
-            if (item == null)
+            if (product == null)
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Item not found");
+                response.ErrorMessages.Add("Product not found");
                 return TypedResults.NotFound(response);
             }
 
             response.StatusCode = HttpStatusCode.OK;
-            response.Result = item;
+            response.Result = product;
             return TypedResults.Ok(response);
         }
         catch (Exception exception)

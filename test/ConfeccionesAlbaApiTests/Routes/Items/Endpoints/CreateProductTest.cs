@@ -1,17 +1,17 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
 
 [TestFixture]
-[TestOf(typeof(CreateItem))]
-public class CreateItemTest
+[TestOf(typeof(CreateProduct))]
+public class CreateProductTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
@@ -33,14 +33,14 @@ public class CreateItemTest
     public async Task Handle_SuccessfulItemCreation_ReturnsCreatedAtRoute()
     {
         // Arrange
-        var itemDto = new ItemCreateRequest("Test Item", 
+        var itemDto = new ProductCreateRequest("Test Item", 
             "Test Description",
             1, // Assuming category exists
             19.99m,
             IsVisible: true);
 
         // Act
-        var result = await CreateItem.Handle(_context, itemDto);
+        var result = await CreateProduct.Handle(_context, itemDto);
 
         // Assert
         result.Should().NotBeNull();
@@ -64,11 +64,11 @@ public class CreateItemTest
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
     {
         // Arrange
-        var itemDto = new ItemCreateRequest("Test Item", "Test Description", 1, 19.99m, true);
+        var itemDto = new ProductCreateRequest("Test Item", "Test Description", 1, 19.99m, true);
 
         // Act - Simulate a database error by disposing the context
         await _context.DisposeAsync();
-        var result = (await CreateItem.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), itemDto)).Result;
+        var result = (await CreateProduct.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();
@@ -84,7 +84,7 @@ public class CreateItemTest
     public async Task Handle_ValidItemWithMinimalData_SuccessfullyCreatesItem()
     {
         // Arrange
-        var itemDto = new ItemCreateRequest("Test Item", 
+        var itemDto = new ProductCreateRequest("Test Item", 
             "", // Minimal description
             1, 
             0m, // Minimum price
@@ -92,7 +92,7 @@ public class CreateItemTest
         );
 
         // Act
-        var result = (await CreateItem.Handle(_context, itemDto)).Result;
+        var result = (await CreateProduct.Handle(_context, itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();
@@ -117,13 +117,13 @@ public class CreateItemTest
     public async Task Handle_MultipleValidItems_CreatesAllSuccessfully()
     {
         // Arrange
-        var itemDto1 = new ItemCreateRequest("Test Item 1", "Test Description 1", 1, 19.99m, true);
+        var itemDto1 = new ProductCreateRequest("Test Item 1", "Test Description 1", 1, 19.99m, true);
 
-        var itemDto2 = new ItemCreateRequest("Test Item 2", "Test Description 2", 2, 29.99m, false);
+        var itemDto2 = new ProductCreateRequest("Test Item 2", "Test Description 2", 2, 29.99m, false);
 
         // Act
-        var result1 = (await CreateItem.Handle(_context, itemDto1)).Result;
-        var result2 = (await CreateItem.Handle(_context, itemDto2)).Result;
+        var result1 = (await CreateProduct.Handle(_context, itemDto1)).Result;
+        var result2 = (await CreateProduct.Handle(_context, itemDto2)).Result;
 
         // Assert
         result1.Should().NotBeNull();
@@ -154,10 +154,10 @@ public class CreateItemTest
     {
         // Arrange
         var longDescription = new string('a', 5000); // Max length
-        var itemDto = new ItemCreateRequest("Test Item", longDescription, 1, 19.99m, true);
+        var itemDto = new ProductCreateRequest("Test Item", longDescription, 1, 19.99m, true);
 
         // Act
-        var result = (await CreateItem.Handle(_context, itemDto)).Result;
+        var result = (await CreateProduct.Handle(_context, itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();

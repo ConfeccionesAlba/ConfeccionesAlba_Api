@@ -1,17 +1,17 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
 
 [TestFixture]
-[TestOf(typeof(GetItems))]
-public class GetItemsTest
+[TestOf(typeof(GetProducts))]
+public class GetProductsTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
@@ -33,7 +33,7 @@ public class GetItemsTest
     public async Task Handle_EmptyDatabase_ReturnsEmptyList()
     {
         // Act
-        var result = await GetItems.Handle(_context);
+        var result = await GetProducts.Handle(_context);
 
         // Assert
         result.Should().NotBeNull();
@@ -81,7 +81,7 @@ public class GetItemsTest
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await GetItems.Handle(_context);
+        var result = await GetProducts.Handle(_context);
 
         // Assert
         result.Should().NotBeNull();
@@ -116,7 +116,7 @@ public class GetItemsTest
         await _context.DisposeAsync();
 
         // Act
-        var result = await GetItems.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()));
+        var result = await GetProducts.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()));
 
         // Assert
         result.Should().NotBeNull();

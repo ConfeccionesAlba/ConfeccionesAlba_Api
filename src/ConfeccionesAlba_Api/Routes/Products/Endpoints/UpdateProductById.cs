@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
+namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public class ItemUpdateRequest
+public class ProductUpdateRequest
 {
     [FromForm] public int Id { get; set; }
     [FromForm] public string? Description { get; set; }
@@ -19,70 +19,70 @@ public class ItemUpdateRequest
     [FromForm] public IFormFile? File { get; set; }
 }
 
-public static class UpdateItemById
+public static class UpdateProductById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, IS3Client s3Client, [FromForm] ItemUpdateRequest itemRequest, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, IS3Client s3Client, [FromForm] ProductUpdateRequest productRequest, int id)
     {
         var response = new ApiResponse();
         
         try
         {
-            if (itemRequest.Id != id)
+            if (productRequest.Id != id)
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Invalid item id");
+                response.ErrorMessages.Add("Invalid Product id");
 
                 return TypedResults.BadRequest(response);
             }
             
-            var itemFromDb = await db.Products.FindAsync(id);
+            var productFromDb = await db.Products.FindAsync(id);
             
-            if (itemFromDb == null)
+            if (productFromDb == null)
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Item not found");
+                response.ErrorMessages.Add("Product not found");
                 return TypedResults.NotFound(response);
             }
 
             // Update item image
-            var file = itemRequest.File;
+            var file = productRequest.File;
             if (file is { Length: > 0 })
             {
-                var imageNameFromDb = itemFromDb.Image.Name; // TODO: Extract file extension from here
+                var imageNameFromDb = productFromDb.Image.Name; // TODO: Extract file extension from here
                 await s3Client.RemoveImage(imageNameFromDb);
                 
                 var newFileName = $"{Guid.NewGuid().ToString()}.webp";
                 var url = await imageProcessor.ProcessAsync(newFileName, file.ContentType, file.OpenReadStream());
                 
-                itemFromDb.Image.Name = newFileName;
-                itemFromDb.Image.Url = url;
+                productFromDb.Image.Name = newFileName;
+                productFromDb.Image.Url = url;
             }
 
             // Update item properties
-            if (!string.IsNullOrEmpty(itemRequest.Description))
+            if (!string.IsNullOrEmpty(productRequest.Description))
             {
-                itemFromDb.Description = itemRequest.Description;
+                productFromDb.Description = productRequest.Description;
             }
 
-            if (itemRequest.CategoryId.HasValue)
+            if (productRequest.CategoryId.HasValue)
             {
-                itemFromDb.CategoryId = itemRequest.CategoryId.Value;
+                productFromDb.CategoryId = productRequest.CategoryId.Value;
             }
 
-            if (itemRequest.PriceReference.HasValue)
+            if (productRequest.PriceReference.HasValue)
             {
-                itemFromDb.PriceReference = itemRequest.PriceReference.Value;
+                productFromDb.PriceReference = productRequest.PriceReference.Value;
             }
 
-            if (itemRequest.IsVisible.HasValue)
+            if (productRequest.IsVisible.HasValue)
             {
-                itemFromDb.IsVisible = itemRequest.IsVisible.Value;
+                productFromDb.IsVisible = productRequest.IsVisible.Value;
             }
 
             // Save to database
-            var entry = db.Entry(itemFromDb);
+            var entry = db.Entry(productFromDb);
 
             if (entry.State == EntityState.Modified)
             {

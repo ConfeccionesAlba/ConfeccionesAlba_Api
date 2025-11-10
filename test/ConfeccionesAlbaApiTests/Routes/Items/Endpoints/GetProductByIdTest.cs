@@ -1,17 +1,17 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
 
 [TestFixture]
-[TestOf(typeof(GetItemById))]
-public class GetItemByIdTest
+[TestOf(typeof(GetProductById))]
+public class GetProductByIdTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
@@ -36,7 +36,7 @@ public class GetItemByIdTest
         int invalidId = 0; // Invalid ID (less than 1)
 
         // Act
-        var result = await GetItemById.Handle(_context, invalidId);
+        var result = await GetProductById.Handle(_context, invalidId);
 
         // Assert
         result.Should().NotBeNull();
@@ -55,7 +55,7 @@ public class GetItemByIdTest
         int nonExistentId = 999; // ID that doesn't exist in the database
 
         // Act
-        var result = await GetItemById.Handle(_context, nonExistentId);
+        var result = await GetProductById.Handle(_context, nonExistentId);
 
         // Assert
         result.Should().NotBeNull();
@@ -87,7 +87,7 @@ public class GetItemByIdTest
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await GetItemById.Handle(_context, testItem.Id);
+        var result = await GetProductById.Handle(_context, testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -115,7 +115,7 @@ public class GetItemByIdTest
         await _context.DisposeAsync();
 
         // Act
-        var result = await GetItemById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), 1);
+        var result = await GetProductById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), 1);
 
         // Assert
         result.Should().NotBeNull();

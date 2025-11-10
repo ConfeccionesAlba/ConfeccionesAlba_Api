@@ -1,17 +1,17 @@
 using System.Net;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
 
 [TestFixture]
-[TestOf(typeof(UpdateItemById))]
-public class UpdateItemByIdTest
+[TestOf(typeof(UpdateProductById))]
+public class UpdateProductByIdTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
@@ -49,10 +49,10 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with updated values
-        var updateDto = new ItemUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
+        var updateDto = new ProductUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
 
         // Act
-        var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -91,14 +91,14 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with mismatched ID
-        var updateDto = new ItemUpdateRequest(testItem.Id + 1, // Mismatched ID
+        var updateDto = new ProductUpdateRequest(testItem.Id + 1, // Mismatched ID
             "Updated description", 
             2, 
             15.99m,
             false);
 
         // Act
-        var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -115,14 +115,14 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create update DTO for non-existent item
-        var updateDto = new ItemUpdateRequest(999, // Non-existent ID
+        var updateDto = new ProductUpdateRequest(999, // Non-existent ID
             "Updated description", 
             2, 
             15.99m, 
             false);
 
         // Act
-        var result = await UpdateItemById.Handle(_context, updateDto, 999);
+        var result = await UpdateProductById.Handle(_context, updateDto, 999);
 
         // Assert
         result.Should().NotBeNull();
@@ -154,13 +154,13 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO
-        var updateDto = new ItemUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
+        var updateDto = new ProductUpdateRequest(testItem.Id, "Updated description", 2, 15.99m, false);
 
         // Simulate database error by disposing the context
         await _context.DisposeAsync();
 
         // Act
-        var result = await UpdateItemById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), updateDto, testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -192,7 +192,7 @@ public class UpdateItemByIdTest
         await _context.SaveChangesAsync();
 
         // Create update DTO with only some fields updated
-        var updateDto = new ItemUpdateRequest(testItem.Id,
+        var updateDto = new ProductUpdateRequest(testItem.Id,
             "Updated description", // Only updating description
             testItem.CategoryId, // Keeping category same
             testItem.PriceReference, // Keeping price same
@@ -200,7 +200,7 @@ public class UpdateItemByIdTest
         );
 
         // Act
-        var result = await UpdateItemById.Handle(_context, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, testItem.Id);
 
         // Assert
         result.Should().NotBeNull();

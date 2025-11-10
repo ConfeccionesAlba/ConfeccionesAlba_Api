@@ -1,9 +1,9 @@
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 using FluentValidation;
 
-namespace ConfeccionesAlba_Api.Routes.Items.Validators;
+namespace ConfeccionesAlba_Api.Routes.Products.Validators;
 
-public class ItemUpdateRequestValidator : AbstractValidator<ItemUpdateRequest>
+public class ItemUpdateRequestValidator : AbstractValidator<ProductUpdateRequest>
 {
     public ItemUpdateRequestValidator()
     {
