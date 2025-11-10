@@ -30,7 +30,7 @@ public static class ItemEndpointGroup
         group.MapPut("/{id:int}", UpdateItemById.Handle)
             .WithName(ItemsEndpointNames.UpdateItem)
             .WithSummary("Update item")
-            .AddEndpointFilter<ValidationFilter<ItemUpdateRequest>>()
+            //.AddEndpointFilter<ValidationFilter<ItemUpdateRequest>>()
             .RequireAuthorization(policy => policy.RequirePermission(Permissions.ItemsUpdate));
         
         return group;
