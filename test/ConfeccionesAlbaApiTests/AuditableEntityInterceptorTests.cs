@@ -1,40 +1,36 @@
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using Microsoft.EntityFrameworkCore;
 using AwesomeAssertions;
+using ConfeccionesAlbaApiTests.Common;
 
 namespace ConfeccionesAlbaApiTests
 {
     [TestFixture]
     public class AuditableEntityInterceptorTests
     {
-        private string _testDatabaseName;
-        private DbContextOptions<ApplicationDbContext> _options;
+        private DbContextFactoryFixture _fixture;
+        private ApplicationDbContext _context;
 
         [SetUp]
         public void Setup()
         {
-            // Configure in-memory database options with a unique name for each test
-            _testDatabaseName = $"InMemoryDbForTesting_{Guid.NewGuid()}";
-            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: _testDatabaseName)
-                .Options;
+            _fixture = new DbContextFactoryFixture();
+            _context = _fixture.GetDbContext();
+            _context.Categories.Add(new Category { Name = "test category", Description = "test description category" });
         }
 
         [TearDown]
         public void TearDown()
         {
             // Clean up the in-memory database after each test
-            using var context = new ApplicationDbContext(_options);
-            context.Database.EnsureDeleted();
+            _context.Dispose();
+            _fixture.Dispose();
         }
 
         [Test]
         public async Task Category_CreatedOnAndUpdatedOn_SetWhenAdded()
         {
             // Arrange
-            await using var context = new ApplicationDbContext(_options);
-
             var category = new Category
             {
                 Name = "Test Category",
@@ -43,8 +39,8 @@ namespace ConfeccionesAlbaApiTests
             };
 
             // Act
-            context.Categories.Add(category);
-            await context.SaveChangesAsync();
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
 
             // Assert
             category.CreatedOn.Should().NotBe(default);
@@ -56,8 +52,6 @@ namespace ConfeccionesAlbaApiTests
         public async Task Category_UpdatedOn_SetWhenModified()
         {
             // Arrange
-            await using var context = new ApplicationDbContext(_options);
-
             var category = new Category
             {
                 Name = "Test Category",
@@ -65,12 +59,12 @@ namespace ConfeccionesAlbaApiTests
                 Description = "Test Description"
             };
 
-            context.Categories.Add(category);
-            await context.SaveChangesAsync();
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
 
             // Act - Simulate a modification
             category.Description = "Updated Description";
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert
             category.CreatedOn.Should().NotBe(default);
@@ -82,19 +76,19 @@ namespace ConfeccionesAlbaApiTests
         public async Task Item_CreatedOn_SetWhenAdded()
         {
             // Arrange
-            await using var context = new ApplicationDbContext(_options);
-
             var item = new Product
             {
                 Name = "Test Item",
                 Description = "Test Description",
+                CategoryId = 1,
                 PriceReference = 10.99m,
-                IsVisible = true
+                IsVisible = true,
+                Image = new Image { Name = "Test name", Url = "Test url" }
             };
 
             // Act
-            context.Products.Add(item);
-            await context.SaveChangesAsync();
+            _context.Products.Add(item);
+            await _context.SaveChangesAsync();
 
             // Assert
             item.CreatedOn.Should().NotBe(default);
@@ -106,22 +100,22 @@ namespace ConfeccionesAlbaApiTests
         public async Task Item_UpdatedOn_SetWhenModified()
         {
             // Arrange
-            await using var context = new ApplicationDbContext(_options);
-
             var item = new Product
             {
                 Name = "Test Item",
                 Description = "Test Description",
+                CategoryId = 1,
                 PriceReference = 10.99m,
-                IsVisible = true
+                IsVisible = true,
+                Image = new Image { Name = "Test name", Url = "Test url" }
             };
 
-            context.Products.Add(item);
-            await context.SaveChangesAsync();
+            _context.Products.Add(item);
+            await _context.SaveChangesAsync();
 
             // Act - Simulate a modification
             item.PriceReference = 15.99m;
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert
             item.CreatedOn.Should().NotBe(default);
@@ -147,8 +141,6 @@ namespace ConfeccionesAlbaApiTests
         public async Task Multiple_Entities_Auditing()
         {
             // Arrange
-            await using var context = new ApplicationDbContext(_options);
-
             var category = new Category
             {
                 Name = "Test Category",
@@ -162,12 +154,13 @@ namespace ConfeccionesAlbaApiTests
                 Description = "Test Description",
                 PriceReference = 10.99m,
                 IsVisible = true,
-                Category = category
+                Category = category,
+                Image = new Image { Name = "Test name", Url = "Test url" }
             };
 
             // Act
-            context.Add(item);
-            await context.SaveChangesAsync();
+            _context.Add(item);
+            await _context.SaveChangesAsync();
 
             // Assert both entities have proper audit timestamps
             category.CreatedOn.Should().NotBe(default);
@@ -181,7 +174,7 @@ namespace ConfeccionesAlbaApiTests
             category.Description = "Updated Category Description";
             item.PriceReference = 15.99m;
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             // Assert both entities have updated timestamps
             category.UpdatedOn.Should().NotBe(default);
