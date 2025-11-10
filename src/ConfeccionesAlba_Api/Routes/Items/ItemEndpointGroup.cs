@@ -25,12 +25,14 @@ public static class ItemEndpointGroup
             .WithName(ItemsEndpointNames.CreateItem)
             .WithSummary("Create new item")
             .AddEndpointFilter<ValidationFilter<ItemCreateRequest>>()
+            .DisableAntiforgery()
             .RequireAuthorization(policy => policy.RequirePermission(Permissions.ItemsCreate));
 
         group.MapPut("/{id:int}", UpdateItemById.Handle)
             .WithName(ItemsEndpointNames.UpdateItem)
             .WithSummary("Update item")
-            //.AddEndpointFilter<ValidationFilter<ItemUpdateRequest>>()
+            .AddEndpointFilter<ValidationFilter<ItemUpdateRequest>>()
+            .DisableAntiforgery()
             .RequireAuthorization(policy => policy.RequirePermission(Permissions.ItemsUpdate));
         
         return group;

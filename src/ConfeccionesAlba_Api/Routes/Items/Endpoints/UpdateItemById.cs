@@ -5,28 +5,30 @@ using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using ConfeccionesAlba_Api.Services.S3.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
-public record ItemUpdateRequest(int Id, string Description, int CategoryId, decimal PriceReference, bool IsVisible);
+public class ItemUpdateRequest
+{
+    [FromForm] public int Id { get; set; }
+    [FromForm] public string? Description { get; set; }
+    [FromForm] public int? CategoryId { get; set; }
+    [FromForm] public decimal? PriceReference { get; set; }
+    [FromForm] public bool? IsVisible { get; set; }
+    [FromForm] public IFormFile? File { get; set; }
+}
 
 public static class UpdateItemById
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(HttpRequest request, ApplicationDbContext db, IImageProcessor imageProcessor, IS3Client s3Client, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, IS3Client s3Client, [FromForm] ItemUpdateRequest itemRequest, int id)
     {
         var response = new ApiResponse();
         
         try
         {
-            var form = await request.ReadFormAsync();
-            
-            // Get product JSON field
-            var itemJson = form["item"].ToString();
-            var itemRequest = JsonSerializer.Deserialize<ItemUpdateRequest>(itemJson, SerializerOptions);
-        
-            if (itemRequest != null && itemRequest.Id != id)
+            if (itemRequest.Id != id)
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.BadRequest;
@@ -44,17 +46,15 @@ public static class UpdateItemById
                 response.ErrorMessages.Add("Item not found");
                 return TypedResults.NotFound(response);
             }
-            
-            // Get file
-            var file = form.Files.GetFile("image");
 
             // Update item image
+            var file = itemRequest.File;
             if (file is { Length: > 0 })
             {
-                var imageNameFromDb = $"{itemFromDb.Image.Name}.webp"; // TODO: Extract file extension from here
+                var imageNameFromDb = itemFromDb.Image.Name; // TODO: Extract file extension from here
                 await s3Client.RemoveImage(imageNameFromDb);
                 
-                var newFileName = Guid.NewGuid().ToString();
+                var newFileName = $"{Guid.NewGuid().ToString()}.webp";
                 var url = await imageProcessor.ProcessAsync(newFileName, file.ContentType, file.OpenReadStream());
                 
                 itemFromDb.Image.Name = newFileName;
@@ -62,21 +62,24 @@ public static class UpdateItemById
             }
 
             // Update item properties
-            if (itemRequest != null)
+            if (!string.IsNullOrEmpty(itemRequest.Description))
             {
-                if (!string.IsNullOrEmpty(itemRequest.Description))
-                {
-                    itemFromDb.Description = itemRequest.Description;
-                }
+                itemFromDb.Description = itemRequest.Description;
+            }
 
-                itemFromDb.CategoryId = itemRequest.CategoryId;
-            
-                itemFromDb.PriceReference = itemRequest.PriceReference;
+            if (itemRequest.CategoryId.HasValue)
+            {
+                itemFromDb.CategoryId = itemRequest.CategoryId.Value;
+            }
 
-                if (itemFromDb.IsVisible != itemRequest.IsVisible)
-                {
-                    itemFromDb.IsVisible = itemRequest.IsVisible;
-                }
+            if (itemRequest.PriceReference.HasValue)
+            {
+                itemFromDb.PriceReference = itemRequest.PriceReference.Value;
+            }
+
+            if (itemRequest.IsVisible.HasValue)
+            {
+                itemFromDb.IsVisible = itemRequest.IsVisible.Value;
             }
 
             // Save to database

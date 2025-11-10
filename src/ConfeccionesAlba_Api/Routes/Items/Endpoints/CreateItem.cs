@@ -8,43 +8,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
 
-public record ItemCreateRequest(string Name, string Description, int CategoryId, decimal PriceReference, bool IsVisible);
+public record ItemCreateRequest(
+    [FromForm] string Name,
+    [FromForm] string Description,
+    [FromForm] int CategoryId,
+    [FromForm] decimal PriceReference,
+    [FromForm] bool IsVisible,
+    [FromForm] IFormFile File);
 
 public static class CreateItem
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
-    
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(HttpRequest request, ApplicationDbContext db, IImageProcessor imageProcessor)
+    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ItemCreateRequest itemRequest)
     {
         var response = new ApiResponse();
         
         try
         {
-            var form = await request.ReadFormAsync();
-            
-            // Get product JSON field
-            var itemJson = form["item"].ToString();
-            var itemRequest = JsonSerializer.Deserialize<ItemCreateRequest>(itemJson, SerializerOptions);
-
-            if (itemRequest is null)
-            {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Invalid item data.");
-
-                return TypedResults.BadRequest(response);
-            }
-            
             // Get file
-            var file = form.Files.GetFile("image");
-            
-            if (file is null || file.Length == 0)
-            {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("No image file provided");
-                return TypedResults.BadRequest(response);
-            }
+            var file = itemRequest.File;
             
             var newFileName = $"{Guid.NewGuid()}.webp"; // TODO: Extract file extension from here
             
