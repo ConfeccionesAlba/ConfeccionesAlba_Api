@@ -1,13 +1,13 @@
 using System.Net;
+using AwesomeAssertions;
+using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using AwesomeAssertions;
-using ConfeccionesAlba_Api.Data;
-using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
+namespace ConfeccionesAlbaApiTests.Routes.Products.Endpoints;
 
 [TestFixture]
 [TestOf(typeof(GetProductById))]
@@ -21,12 +21,14 @@ public class GetProductByIdTest
     {
         _fixture = new DbContextFactoryFixture();
         _context = _fixture.GetDbContext();
+        _context.Categories.Add(new Category { Name = "category1", Description = "category1 desc" });
     }
 
     [TearDown]
     public void TearDown()
     {
         _context.Dispose();
+        _fixture.Dispose();
     }
 
     [Test]
@@ -45,7 +47,7 @@ public class GetProductByIdTest
         badRequestResult.Should().NotBeNull();
         badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         badRequestResult.Value.IsSuccess.Should().BeFalse();
-        badRequestResult.Value.ErrorMessages.Should().Contain("Invalid item Id");
+        badRequestResult.Value.ErrorMessages.Should().Contain("Invalid Product Id");
     }
 
     [Test]
@@ -64,7 +66,7 @@ public class GetProductByIdTest
         notFoundResult.Should().NotBeNull();
         notFoundResult.Value.StatusCode.Should().Be(HttpStatusCode.NotFound);
         notFoundResult.Value.IsSuccess.Should().BeFalse();
-        notFoundResult.Value.ErrorMessages.Should().Contain("Item not found");
+        notFoundResult.Value.ErrorMessages.Should().Contain("Product not found");
     }
 
     [Test]
@@ -80,7 +82,8 @@ public class GetProductByIdTest
             PriceReference = 10.99m,
             IsVisible = true,
             CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow
+            UpdatedOn = DateTime.UtcNow,
+            Image = new Image { Name = "test name", Url = "test url" }
         };
 
         await _context.Products.AddAsync(testItem);

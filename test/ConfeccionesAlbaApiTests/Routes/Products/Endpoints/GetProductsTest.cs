@@ -1,13 +1,13 @@
 using System.Net;
+using AwesomeAssertions;
+using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using AwesomeAssertions;
-using ConfeccionesAlba_Api.Data;
-using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
+namespace ConfeccionesAlbaApiTests.Routes.Products.Endpoints;
 
 [TestFixture]
 [TestOf(typeof(GetProducts))]
@@ -21,12 +21,14 @@ public class GetProductsTest
     {
         _fixture = new DbContextFactoryFixture();
         _context = _fixture.GetDbContext();
+        _context.Categories.Add(new Category { Name = "category1", Description = "category1 desc" });
     }
 
     [TearDown]
     public void TearDown()
     {
         _context.Dispose();
+        _fixture.Dispose();
     }
 
     [Test]
@@ -63,17 +65,19 @@ public class GetProductsTest
                 PriceReference = 10.99m,
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow
+                UpdatedOn = DateTime.UtcNow,
+                Image = new Image {Name="test name", Url = "test url"}
             },
             new Product
             {
                 Name = "Test Item 2",
                 Description = "Test Description 2",
-                CategoryId = 2,
+                CategoryId = 1,
                 PriceReference = 20.99m,
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow
+                UpdatedOn = DateTime.UtcNow,
+                Image = new Image {Name="test name", Url = "test url"}
             }
         };
 
