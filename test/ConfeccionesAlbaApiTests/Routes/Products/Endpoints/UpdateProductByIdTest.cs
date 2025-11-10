@@ -252,4 +252,47 @@ public class UpdateProductByIdTest
         updatedItem.PriceReference.Should().Be(10.99m); // Should remain unchanged
         updatedItem.IsVisible.Should().BeTrue(); // Should remain unchanged
     }
+    
+    [Test]
+    public async Task Handle_NoChangesDetected_ReturnsBadRequest()
+    {
+        // Arrange
+        // Create a test item in the database
+        var testItem = new Product
+        {
+            Name = "Test Item",
+            Description = "Original description",
+            CategoryId = 1,
+            PriceReference = 10.99m,
+            IsVisible = true,
+            CreatedOn = DateTime.UtcNow,
+            UpdatedOn = DateTime.UtcNow,
+            Image = new Image {Name="test name", Url = "test url"}
+        };
+
+        await _context.Products.AddAsync(testItem);
+        await _context.SaveChangesAsync();
+
+        // Create update DTO with same values (no changes)
+        var updateDto = new ProductUpdateRequest
+        {
+            Id = testItem.Id,
+            Description = testItem.Description, // Same description
+            CategoryId = testItem.CategoryId, // Same category
+            PriceReference = testItem.PriceReference, // Same price
+            IsVisible = testItem.IsVisible // Same visibility
+        };
+
+        // Act
+        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, testItem.Id);
+
+        // Assert
+        result.Should().NotBeNull();
+
+        var badRequestResult = result.Result as BadRequest<ApiResponse>;
+        badRequestResult.Should().NotBeNull();
+        badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        badRequestResult.Value.IsSuccess.Should().BeFalse();
+        badRequestResult.Value.ErrorMessages.Should().Contain("No changes detected in submitted data");
+    }
 }
