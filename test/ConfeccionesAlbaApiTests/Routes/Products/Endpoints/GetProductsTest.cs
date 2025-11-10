@@ -1,17 +1,17 @@
 using System.Net;
+using AwesomeAssertions;
+using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Routes.Items.Endpoints;
+using ConfeccionesAlba_Api.Routes.Products.Endpoints;
 using ConfeccionesAlbaApiTests.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using AwesomeAssertions;
-using ConfeccionesAlba_Api.Data;
 
-namespace ConfeccionesAlbaApiTests.Routes.Items.Endpoints;
+namespace ConfeccionesAlbaApiTests.Routes.Products.Endpoints;
 
 [TestFixture]
-[TestOf(typeof(GetItems))]
-public class GetItemsTest
+[TestOf(typeof(GetProducts))]
+public class GetProductsTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
@@ -21,19 +21,21 @@ public class GetItemsTest
     {
         _fixture = new DbContextFactoryFixture();
         _context = _fixture.GetDbContext();
+        _context.Categories.Add(new Category { Name = "category1", Description = "category1 desc" });
     }
 
     [TearDown]
     public void TearDown()
     {
         _context.Dispose();
+        _fixture.Dispose();
     }
 
     [Test]
     public async Task Handle_EmptyDatabase_ReturnsEmptyList()
     {
         // Act
-        var result = await GetItems.Handle(_context);
+        var result = await GetProducts.Handle(_context);
 
         // Assert
         result.Should().NotBeNull();
@@ -42,8 +44,8 @@ public class GetItemsTest
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Item>>();
-        var items = okResult.Value.Result as List<Item>;
+        okResult.Value.Result.Should().BeOfType<List<Product>>();
+        var items = okResult.Value.Result as List<Product>;
         items.Should().NotBeNull();
         items.Count.Should().Be(0);
     }
@@ -53,9 +55,9 @@ public class GetItemsTest
     {
         // Arrange
         // Add test items to the database
-        var testItems = new List<Item>
+        var testItems = new List<Product>
         {
-            new Item
+            new Product
             {
                 Name = "Test Item 1",
                 Description = "Test Description 1",
@@ -63,25 +65,27 @@ public class GetItemsTest
                 PriceReference = 10.99m,
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow
+                UpdatedOn = DateTime.UtcNow,
+                Image = new Image {Name="test name", Url = "test url"}
             },
-            new Item
+            new Product
             {
                 Name = "Test Item 2",
                 Description = "Test Description 2",
-                CategoryId = 2,
+                CategoryId = 1,
                 PriceReference = 20.99m,
                 IsVisible = true,
                 CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow
+                UpdatedOn = DateTime.UtcNow,
+                Image = new Image {Name="test name", Url = "test url"}
             }
         };
 
-        await _context.Items.AddRangeAsync(testItems);
+        await _context.Products.AddRangeAsync(testItems);
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await GetItems.Handle(_context);
+        var result = await GetProducts.Handle(_context);
 
         // Assert
         result.Should().NotBeNull();
@@ -90,8 +94,8 @@ public class GetItemsTest
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Item>>();
-        var items = okResult.Value.Result as List<Item>;
+        okResult.Value.Result.Should().BeOfType<List<Product>>();
+        var items = okResult.Value.Result as List<Product>;
         items.Should().NotBeNull();
         items.Count.Should().Be(2);
 
@@ -116,7 +120,7 @@ public class GetItemsTest
         await _context.DisposeAsync();
 
         // Act
-        var result = await GetItems.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()));
+        var result = await GetProducts.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()));
 
         // Assert
         result.Should().NotBeNull();

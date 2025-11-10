@@ -14,11 +14,9 @@ public static class PermissionExtensions
         Permissions.CategoriesCreate => "categories:create",
         Permissions.CategoriesUpdate => "categories:update",
         Permissions.CategoriesDelete => "categories:delete",
-        Permissions.ItemsCreate => "items:create",
-        Permissions.ItemsUpdate => "items:update",
-        Permissions.ItemsDelete => "items:delete",
-        Permissions.ImagesCreate => "images:create",
-        Permissions.ImagesDelete => "images:delete",
+        Permissions.ProductsCreate => "products:create",
+        Permissions.ProductsUpdate => "products:update",
+        Permissions.ProductsDelete => "products:delete",
         _ => throw new ArgumentOutOfRangeException(nameof(p))
     };
     

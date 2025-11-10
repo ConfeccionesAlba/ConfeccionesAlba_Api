@@ -8,9 +8,8 @@ namespace ConfeccionesAlba_Api.Data;
 
 public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public DbSet<Item> Items { get; set; }
+    public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<Image> Images { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());

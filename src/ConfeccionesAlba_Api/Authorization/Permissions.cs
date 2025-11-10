@@ -9,9 +9,7 @@ public enum Permissions
     CategoriesCreate,
     CategoriesUpdate,
     CategoriesDelete,
-    ItemsCreate,
-    ItemsUpdate,
-    ItemsDelete,
-    ImagesCreate,
-    ImagesDelete,
+    ProductsCreate,
+    ProductsUpdate,
+    ProductsDelete,
 }

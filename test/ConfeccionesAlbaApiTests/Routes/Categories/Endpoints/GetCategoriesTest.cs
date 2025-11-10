@@ -27,6 +27,7 @@ public class GetCategoriesTest
     public void TearDown()
     {
         _context.Dispose();
+        _fixture.Dispose();
     }
 
     [Test]

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ConfeccionesAlba_Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConfeccionesAlba_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110133511_SwitchImageToComplexType")]
+    partial class SwitchImageToComplexType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,7 +128,7 @@ namespace ConfeccionesAlba_Api.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ConfeccionesAlba_Api.Models.Product", b =>
+            modelBuilder.Entity("ConfeccionesAlba_Api.Models.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,7 +161,7 @@ namespace ConfeccionesAlba_Api.Migrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Image", "ConfeccionesAlba_Api.Models.Product.Image#Image", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("Image", "ConfeccionesAlba_Api.Models.Item.Image#Image", b1 =>
                         {
                             b1.IsRequired();
 
@@ -177,7 +180,7 @@ namespace ConfeccionesAlba_Api.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -298,21 +301,35 @@ namespace ConfeccionesAlba_Api.Migrations
                         {
                             Id = 1008,
                             ClaimType = "permission",
-                            ClaimValue = "products:create",
+                            ClaimValue = "items:create",
                             RoleId = "f4dbaa01-dcae-40a5-844e-d8a719393af4"
                         },
                         new
                         {
                             Id = 1009,
                             ClaimType = "permission",
-                            ClaimValue = "products:update",
+                            ClaimValue = "items:update",
                             RoleId = "f4dbaa01-dcae-40a5-844e-d8a719393af4"
                         },
                         new
                         {
                             Id = 1010,
                             ClaimType = "permission",
-                            ClaimValue = "products:delete",
+                            ClaimValue = "items:delete",
+                            RoleId = "f4dbaa01-dcae-40a5-844e-d8a719393af4"
+                        },
+                        new
+                        {
+                            Id = 1011,
+                            ClaimType = "permission",
+                            ClaimValue = "images:create",
+                            RoleId = "f4dbaa01-dcae-40a5-844e-d8a719393af4"
+                        },
+                        new
+                        {
+                            Id = 1012,
+                            ClaimType = "permission",
+                            ClaimValue = "images:delete",
                             RoleId = "f4dbaa01-dcae-40a5-844e-d8a719393af4"
                         },
                         new
@@ -340,21 +357,35 @@ namespace ConfeccionesAlba_Api.Migrations
                         {
                             Id = 2004,
                             ClaimType = "permission",
-                            ClaimValue = "products:create",
+                            ClaimValue = "items:create",
                             RoleId = "1dacfc02-50b8-43da-a050-b0fa556224b7"
                         },
                         new
                         {
                             Id = 2005,
                             ClaimType = "permission",
-                            ClaimValue = "products:update",
+                            ClaimValue = "items:update",
                             RoleId = "1dacfc02-50b8-43da-a050-b0fa556224b7"
                         },
                         new
                         {
                             Id = 2006,
                             ClaimType = "permission",
-                            ClaimValue = "products:delete",
+                            ClaimValue = "items:delete",
+                            RoleId = "1dacfc02-50b8-43da-a050-b0fa556224b7"
+                        },
+                        new
+                        {
+                            Id = 2007,
+                            ClaimType = "permission",
+                            ClaimValue = "images:create",
+                            RoleId = "1dacfc02-50b8-43da-a050-b0fa556224b7"
+                        },
+                        new
+                        {
+                            Id = 2008,
+                            ClaimType = "permission",
+                            ClaimValue = "images:delete",
                             RoleId = "1dacfc02-50b8-43da-a050-b0fa556224b7"
                         });
                 });
@@ -440,7 +471,7 @@ namespace ConfeccionesAlba_Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ConfeccionesAlba_Api.Models.Product", b =>
+            modelBuilder.Entity("ConfeccionesAlba_Api.Models.Item", b =>
                 {
                     b.HasOne("ConfeccionesAlba_Api.Models.Category", "Category")
                         .WithMany()

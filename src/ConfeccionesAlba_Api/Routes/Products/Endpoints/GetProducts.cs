@@ -4,9 +4,9 @@ using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConfeccionesAlba_Api.Routes.Items.Endpoints;
+namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public static class GetItems
+public static class GetProducts
 {
     public static async Task<Results<Ok<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db)
     {
@@ -14,10 +14,10 @@ public static class GetItems
 
         try
         {
-            var items = await db.Items.ToListAsync();
+            var products = await db.Products.AsNoTracking().ToListAsync();
         
             response.StatusCode = HttpStatusCode.OK;
-            response.Result = items;
+            response.Result = products;
         
             return TypedResults.Ok(response);
         }

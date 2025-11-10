@@ -15,4 +15,9 @@ public class ImageProcessor(IS3Client s3Client, IImageOptimizer webpImageOptimiz
 
         return await s3Client.UploadImage(fileRequest);
     }
+
+    public Task RemoveAsync(string name)
+    {
+        return s3Client.RemoveImage(name);
+    }
 }

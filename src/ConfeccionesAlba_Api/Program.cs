@@ -8,7 +8,7 @@ using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Routes.Auth;
 using ConfeccionesAlba_Api.Routes.Auth.Services;
 using ConfeccionesAlba_Api.Routes.Categories;
-using ConfeccionesAlba_Api.Routes.Items;
+using ConfeccionesAlba_Api.Routes.Products;
 using ConfeccionesAlba_Api.Services.Images;
 using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using ConfeccionesAlba_Api.Services.S3;

@@ -4,7 +4,7 @@ using ConfeccionesAlba_Api.Models.Interfaces;
 
 namespace ConfeccionesAlba_Api.Models;
 
-public class Item : IAuditableEntity
+public class Product : IAuditableEntity
 {
     [Key]
     public int Id { get; set; }
@@ -23,11 +23,8 @@ public class Item : IAuditableEntity
     public Category? Category { get; set; }
     
     public decimal PriceReference { get; set; }
-    
-    public int? ImageId { get; set; }
-    
-    [ForeignKey("ImageId")]
-    public Image? Image { get; set; }
+
+    public Image Image { get; set; } = null!;
     
     public bool IsVisible { get; set; } = true;
 

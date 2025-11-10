@@ -27,6 +27,7 @@ public class GetCategoryByIdTest
     public void TearDown()
     {
         _context.Dispose();
+        _fixture.Dispose();
     }
 
     [Test]

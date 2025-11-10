@@ -2,15 +2,12 @@ using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
-namespace ConfeccionesAlba_Api.Routes.Images.Endpoints;
+namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public static class GetImageById
+public static class GetProductById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(
-        ApplicationDbContext db,
-        int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, int id)
     {
         var response = new ApiResponse();
 
@@ -18,24 +15,24 @@ public static class GetImageById
         {
             response.IsSuccess = false;
             response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.Add("Invalid image Id");
+            response.ErrorMessages.Add("Invalid Product Id");
             return TypedResults.BadRequest(response);
         }
         
         try
         {
-            var image = await db.Images.FindAsync(id);
+            var product = await db.Products.FindAsync(id);
             
-            if (image == null)
+            if (product == null)
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("image not found");
+                response.ErrorMessages.Add("Product not found");
                 return TypedResults.NotFound(response);
             }
 
-            response.Result = image;
             response.StatusCode = HttpStatusCode.OK;
+            response.Result = product;
             return TypedResults.Ok(response);
         }
         catch (Exception exception)
