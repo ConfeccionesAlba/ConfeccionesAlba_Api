@@ -7,19 +7,15 @@ namespace ConfeccionesAlbaApiTests
     [TestFixture]
     public class InMemoryDatabaseTestSuite
     {
-        private string _testDatabaseName;
-
         [SetUp]
         public void Setup()
         {
-            // Configure in-memory database options with a unique name for each test
-            _testDatabaseName = $"InMemoryDbForTesting_{Guid.NewGuid()}";
         }
 
         private DbContextOptions<ApplicationDbContext> CreateInMemoryOptions()
         {
             return new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: _testDatabaseName)
+                .UseSqlite("DataSource=:memory:")
                 .Options;
         }
 
