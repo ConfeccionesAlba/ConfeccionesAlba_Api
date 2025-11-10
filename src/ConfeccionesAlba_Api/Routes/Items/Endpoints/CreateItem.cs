@@ -33,7 +33,7 @@ public static class CreateItem
             // Save to database
             var image = new Image { Name = newFileName, Url = url };
 
-            var newItem = new Item
+            var newItem = new Product
             {
                 Name = itemRequest.Name,
                 Description = itemRequest.Description,
@@ -43,7 +43,7 @@ public static class CreateItem
                 Image = image,
             };
 
-            db.Items.Add(newItem);
+            db.Products.Add(newItem);
             await db.SaveChangesAsync();
 
             response.Result = newItem;

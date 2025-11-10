@@ -34,7 +34,7 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create a test item in the database
-        var testItem = new Item
+        var testItem = new Product
         {
             Name = "Test Item",
             Description = "Original description",
@@ -45,7 +45,7 @@ public class UpdateItemByIdTest
             UpdatedOn = DateTime.UtcNow
         };
 
-        await _context.Items.AddAsync(testItem);
+        await _context.Products.AddAsync(testItem);
         await _context.SaveChangesAsync();
 
         // Create update DTO with updated values
@@ -63,7 +63,7 @@ public class UpdateItemByIdTest
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was updated in the database
-        var updatedItem = await _context.Items.FindAsync(testItem.Id);
+        var updatedItem = await _context.Products.FindAsync(testItem.Id);
         updatedItem.Should().NotBeNull();
         updatedItem.Description.Should().Be("Updated description");
         updatedItem.CategoryId.Should().Be(2);
@@ -76,7 +76,7 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create a test item in the database
-        var testItem = new Item
+        var testItem = new Product
         {
             Name = "Test Item",
             Description = "Original description",
@@ -87,7 +87,7 @@ public class UpdateItemByIdTest
             UpdatedOn = DateTime.UtcNow
         };
 
-        await _context.Items.AddAsync(testItem);
+        await _context.Products.AddAsync(testItem);
         await _context.SaveChangesAsync();
 
         // Create update DTO with mismatched ID
@@ -139,7 +139,7 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create a test item in the database
-        var testItem = new Item
+        var testItem = new Product
         {
             Name = "Test Item",
             Description = "Original description",
@@ -150,7 +150,7 @@ public class UpdateItemByIdTest
             UpdatedOn = DateTime.UtcNow
         };
 
-        await _context.Items.AddAsync(testItem);
+        await _context.Products.AddAsync(testItem);
         await _context.SaveChangesAsync();
 
         // Create update DTO
@@ -177,7 +177,7 @@ public class UpdateItemByIdTest
     {
         // Arrange
         // Create a test item in the database
-        var testItem = new Item
+        var testItem = new Product
         {
             Name = "Test Item",
             Description = "Original description",
@@ -188,7 +188,7 @@ public class UpdateItemByIdTest
             UpdatedOn = DateTime.UtcNow
         };
 
-        await _context.Items.AddAsync(testItem);
+        await _context.Products.AddAsync(testItem);
         await _context.SaveChangesAsync();
 
         // Create update DTO with only some fields updated
@@ -211,7 +211,7 @@ public class UpdateItemByIdTest
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify only the description was updated
-        var updatedItem = await _context.Items.FindAsync(testItem.Id);
+        var updatedItem = await _context.Products.FindAsync(testItem.Id);
         updatedItem.Should().NotBeNull();
         updatedItem.Description.Should().Be("Updated description");
         updatedItem.CategoryId.Should().Be(1); // Should remain unchanged

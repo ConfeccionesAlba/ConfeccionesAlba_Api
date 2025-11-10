@@ -36,7 +36,7 @@ public static class UpdateItemById
                 return TypedResults.BadRequest(response);
             }
             
-            var itemFromDb = await db.Items.FindAsync(id);
+            var itemFromDb = await db.Products.FindAsync(id);
             
             if (itemFromDb == null)
             {

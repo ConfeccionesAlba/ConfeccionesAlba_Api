@@ -84,7 +84,7 @@ namespace ConfeccionesAlbaApiTests
             // Arrange
             await using var context = new ApplicationDbContext(_options);
 
-            var item = new Item
+            var item = new Product
             {
                 Name = "Test Item",
                 Description = "Test Description",
@@ -93,7 +93,7 @@ namespace ConfeccionesAlbaApiTests
             };
 
             // Act
-            context.Items.Add(item);
+            context.Products.Add(item);
             await context.SaveChangesAsync();
 
             // Assert
@@ -108,7 +108,7 @@ namespace ConfeccionesAlbaApiTests
             // Arrange
             await using var context = new ApplicationDbContext(_options);
 
-            var item = new Item
+            var item = new Product
             {
                 Name = "Test Item",
                 Description = "Test Description",
@@ -116,7 +116,7 @@ namespace ConfeccionesAlbaApiTests
                 IsVisible = true
             };
 
-            context.Items.Add(item);
+            context.Products.Add(item);
             await context.SaveChangesAsync();
 
             // Act - Simulate a modification
@@ -156,7 +156,7 @@ namespace ConfeccionesAlbaApiTests
                 Description = "Test Description"
             };
 
-            var item = new Item
+            var item = new Product
             {
                 Name = "Test Item",
                 Description = "Test Description",

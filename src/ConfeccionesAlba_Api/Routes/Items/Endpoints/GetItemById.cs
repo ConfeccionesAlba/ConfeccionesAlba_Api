@@ -21,7 +21,7 @@ public static class GetItemById
         
         try
         {
-            var item = await db.Items.FindAsync(id);
+            var item = await db.Products.FindAsync(id);
             
             if (item == null)
             {

@@ -42,8 +42,8 @@ public class GetItemsTest
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Item>>();
-        var items = okResult.Value.Result as List<Item>;
+        okResult.Value.Result.Should().BeOfType<List<Product>>();
+        var items = okResult.Value.Result as List<Product>;
         items.Should().NotBeNull();
         items.Count.Should().Be(0);
     }
@@ -53,9 +53,9 @@ public class GetItemsTest
     {
         // Arrange
         // Add test items to the database
-        var testItems = new List<Item>
+        var testItems = new List<Product>
         {
-            new Item
+            new Product
             {
                 Name = "Test Item 1",
                 Description = "Test Description 1",
@@ -65,7 +65,7 @@ public class GetItemsTest
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow
             },
-            new Item
+            new Product
             {
                 Name = "Test Item 2",
                 Description = "Test Description 2",
@@ -77,7 +77,7 @@ public class GetItemsTest
             }
         };
 
-        await _context.Items.AddRangeAsync(testItems);
+        await _context.Products.AddRangeAsync(testItems);
         await _context.SaveChangesAsync();
 
         // Act
@@ -90,8 +90,8 @@ public class GetItemsTest
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Item>>();
-        var items = okResult.Value.Result as List<Item>;
+        okResult.Value.Result.Should().BeOfType<List<Product>>();
+        var items = okResult.Value.Result as List<Product>;
         items.Should().NotBeNull();
         items.Count.Should().Be(2);
 

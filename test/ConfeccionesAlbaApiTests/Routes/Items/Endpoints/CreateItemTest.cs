@@ -46,12 +46,12 @@ public class CreateItemTest
         result.Should().NotBeNull();
 
         var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
-        createdResult.Value.Result.Should().BeOfType<Item>();
+        createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was added to the database
-        var items = await _context.Items.ToListAsync();
+        var items = await _context.Products.ToListAsync();
         items.Should().HaveCount(1);
         items[0].Name.Should().Be(itemDto.Name);
         items[0].Description.Should().Be(itemDto.Description);
@@ -99,12 +99,12 @@ public class CreateItemTest
         result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
 
         var createdResult = (CreatedAtRoute<ApiResponse>)result;
-        createdResult.Value.Result.Should().BeOfType<Item>();
+        createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was added to the database
-        var items = await _context.Items.ToListAsync();
+        var items = await _context.Products.ToListAsync();
         items.Should().HaveCount(1);
         items[0].Name.Should().Be(itemDto.Name);
         items[0].Description.Should().BeEmpty();
@@ -133,7 +133,7 @@ public class CreateItemTest
         result2.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
 
         // Verify both items were added to the database
-        var items = await _context.Items.ToListAsync();
+        var items = await _context.Products.ToListAsync();
         items.Should().HaveCount(2);
 
         items.Should().Contain(i => i.Name == itemDto1.Name &&
@@ -164,12 +164,12 @@ public class CreateItemTest
         result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
 
         var createdResult = (CreatedAtRoute<ApiResponse>)result;
-        createdResult.Value.Result.Should().BeOfType<Item>();
+        createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was added to the database
-        var items = await _context.Items.ToListAsync();
+        var items = await _context.Products.ToListAsync();
         items.Should().HaveCount(1);
         items[0].Name.Should().Be(itemDto.Name);
         items[0].Description.Should().Be(longDescription);

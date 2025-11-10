@@ -72,7 +72,7 @@ public class GetItemByIdTest
     {
         // Arrange
         // Add a test item to the database
-        var testItem = new Item
+        var testItem = new Product
         {
             Name = "Test Item",
             Description = "Test Description",
@@ -83,7 +83,7 @@ public class GetItemByIdTest
             UpdatedOn = DateTime.UtcNow
         };
 
-        await _context.Items.AddAsync(testItem);
+        await _context.Products.AddAsync(testItem);
         await _context.SaveChangesAsync();
 
         // Act
@@ -96,9 +96,9 @@ public class GetItemByIdTest
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<Item>();
+        okResult.Value.Result.Should().BeOfType<Product>();
 
-        var returnedItem = okResult.Value.Result as Item;
+        var returnedItem = okResult.Value.Result as Product;
         returnedItem.Should().NotBeNull();
         returnedItem.Id.Should().Be(testItem.Id);
         returnedItem.Name.Should().Be(testItem.Name);

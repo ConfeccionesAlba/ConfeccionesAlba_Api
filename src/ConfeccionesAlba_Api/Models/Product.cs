@@ -4,7 +4,7 @@ using ConfeccionesAlba_Api.Models.Interfaces;
 
 namespace ConfeccionesAlba_Api.Models;
 
-public class Item : IAuditableEntity
+public class Product : IAuditableEntity
 {
     [Key]
     public int Id { get; set; }
