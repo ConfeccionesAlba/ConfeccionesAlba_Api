@@ -14,7 +14,7 @@ public static class GetItems
 
         try
         {
-            var items = await db.Items.ToListAsync();
+            var items = await db.Items.AsNoTracking().ToListAsync();
         
             response.StatusCode = HttpStatusCode.OK;
             response.Result = items;
