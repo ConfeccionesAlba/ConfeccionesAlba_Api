@@ -1,30 +1,36 @@
 using ConfeccionesAlba_Api.Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConfeccionesAlbaApiTests.Common;
 
-public sealed class DbContextFactoryFixture
+public sealed class DbContextFactoryFixture : IDisposable
 {
+    private readonly SqliteConnection _connection;
     private readonly ApplicationDbContext _fixture;
-    private readonly string _testDatabaseName
-        ;
+
     public DbContextFactoryFixture()
     {
-        // Configure in-memory database options with a unique name for each test
-        _testDatabaseName = $"InMemoryDbForTesting_{Guid.NewGuid()}";
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
 
-        _fixture = new ApplicationDbContext(CreateInMemoryOptions());
-    }
-
-    private DbContextOptions<ApplicationDbContext> CreateInMemoryOptions()
-    {
-        return new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: _testDatabaseName)
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(_connection)
             .Options;
+        
+        _fixture = new ApplicationDbContext(options);
+        _fixture.Database.EnsureCreated();
     }
 
     public ApplicationDbContext GetDbContext()
     {
         return _fixture;
+    }
+    
+    public void Dispose()
+    {
+        _connection.Close();
+        _connection.Dispose();
+        _fixture.Dispose();
     }
 }
