@@ -2,7 +2,6 @@ using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Services.Images.Interfaces;
-using ConfeccionesAlba_Api.Services.S3.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ public class ProductUpdateRequest
 
 public static class UpdateProductById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, IS3Client s3Client, [FromForm] ProductUpdateRequest productRequest, int id)
+    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductUpdateRequest productRequest, int id)
     {
         var response = new ApiResponse();
         
@@ -51,7 +50,7 @@ public static class UpdateProductById
             if (file is { Length: > 0 })
             {
                 var imageNameFromDb = productFromDb.Image.Name; // TODO: Extract file extension from here
-                await s3Client.RemoveImage(imageNameFromDb);
+                await imageProcessor.RemoveAsync(imageNameFromDb);
                 
                 var newFileName = $"{Guid.NewGuid().ToString()}.webp";
                 var url = await imageProcessor.ProcessAsync(newFileName, file.ContentType, file.OpenReadStream());
@@ -93,6 +92,7 @@ public static class UpdateProductById
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.ErrorMessages.Add("No changes detected in submitted data");
+                
 
                 return TypedResults.BadRequest(response);
             }
