@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace ConfeccionesAlba_Api.Routes.Products.Validators;
 
-public class ItemUpdateRequestValidator : AbstractValidator<ProductUpdateRequest>
+public class ProductUpdateRequestValidator : AbstractValidator<ProductUpdateRequest>
 {
-    public ItemUpdateRequestValidator()
+    public ProductUpdateRequestValidator()
     {
         RuleFor(x => x.Id).GreaterThan(0);
         RuleFor(x => x.CategoryId).GreaterThan(0);

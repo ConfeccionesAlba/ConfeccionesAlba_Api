@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace ConfeccionesAlba_Api.Routes.Products.Validators;
 
-public class ItemCreateRequestValidator : AbstractValidator<ProductCreateRequest>
+public class ProductCreateRequestValidator : AbstractValidator<ProductCreateRequest>
 {
-    public ItemCreateRequestValidator()
+    public ProductCreateRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(250);
         RuleFor(x => x.Description).NotEmpty().MaximumLength(5000);
