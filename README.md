@@ -19,5 +19,6 @@
 * `JwtSettings__ExpirationInMinutes` Expiration time in minutes of the Jwt token
 * `JwtSettings__Issuer` Issuer
 * `JwtSettings__Audience` Audience
+* `AllowedOrigins__0` CORS Allowed Origin
 
 ![Alt](https://repobeats.axiom.co/api/embed/7d418bd249040596bcd0fbf34261db3ed922faa0.svg "Repobeats analytics image")
