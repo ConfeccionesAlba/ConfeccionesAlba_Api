@@ -80,7 +80,18 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IClaimsTransformation, PermissionClaimsTransformation>();
 
-builder.Services.AddCors();
+// Configure CORS with specific allowed origins
+// Setup using env vars: AllowedOrigins__0, AllowedOrigins__1, etc
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SpecificOrigins", policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi(options =>
@@ -132,8 +143,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// TODO: Update allowed origin after the Frontend is designed
-app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("*"));
+// Use the configured CORS policy
+app.UseCors("SpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
