@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace ConfeccionesAlba_Api;
 
@@ -11,9 +11,9 @@ internal sealed class BearerSecuritySchemeTransformer(Microsoft.AspNetCore.Authe
         var authenticationSchemes = await authenticationSchemeProvider.GetAllSchemesAsync();
         if (authenticationSchemes.Any(authScheme => authScheme.Name == JwtBearerDefaults.AuthenticationScheme))
         {
-            var requirement = new Dictionary<string, OpenApiSecurityScheme> // TODO: Move to IOpenApiSecurityScheme after upgrade to Net 10
+            var requirement = new Dictionary<string, IOpenApiSecurityScheme>
             {
-                [JwtBearerDefaults.AuthenticationScheme] = new()
+                [JwtBearerDefaults.AuthenticationScheme] = new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
