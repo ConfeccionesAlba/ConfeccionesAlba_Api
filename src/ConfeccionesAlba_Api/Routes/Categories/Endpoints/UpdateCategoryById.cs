@@ -9,9 +9,9 @@ public record CategoryUpdateRequest(int Id, string Description);
 
 public static class UpdateCategoryById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryUpdateRequest categoryRequest, int id)
+    public static async Task<Results<Ok<ApiResponse<Category>>, NotFound<ApiResponse<Category>>, BadRequest<ApiResponse<Category>>, InternalServerError<ApiResponse<Category>>>> Handle(ApplicationDbContext db, CategoryUpdateRequest categoryRequest, int id)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Category>();
 
         if (categoryRequest.Id != id)
         {

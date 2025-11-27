@@ -10,10 +10,10 @@ public record RegisterRequest(string Name, string Email, string Password);
 
 public static class RegisterUser
 {
-    public static async Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(
+    public static async Task<Results<Ok<ApiResponse<object>>, BadRequest<ApiResponse<object>>, InternalServerError<ApiResponse<object>>>> Handle(
         UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, RegisterRequest model)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<object>();
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
         try

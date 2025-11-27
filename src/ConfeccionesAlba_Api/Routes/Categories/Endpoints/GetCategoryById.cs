@@ -7,9 +7,9 @@ namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 public static class GetCategoryById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, int id)
+    public static async Task<Results<Ok<ApiResponse<Category>>, NotFound<ApiResponse<Category>>, BadRequest<ApiResponse<Category>>, InternalServerError<ApiResponse<Category>>>> Handle(ApplicationDbContext db, int id)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Category>();
 
         if (id < 1)
         {

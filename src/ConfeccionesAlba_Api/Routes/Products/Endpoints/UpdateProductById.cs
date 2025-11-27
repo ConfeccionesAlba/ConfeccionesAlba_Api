@@ -20,9 +20,9 @@ public class ProductUpdateRequest
 
 public static class UpdateProductById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductUpdateRequest productRequest, int id)
+    public static async Task<Results<Ok<ApiResponse<Product>>, NotFound<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductUpdateRequest productRequest, int id)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Product>();
         
         try
         {

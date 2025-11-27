@@ -7,9 +7,9 @@ namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 public static class GetProductById
 {
-    public static async Task<Results<Ok<ApiResponse>, NotFound<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, int id)
+    public static async Task<Results<Ok<ApiResponse<Product>>, NotFound<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, int id)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Product>();
 
         if (id < 1)
         {

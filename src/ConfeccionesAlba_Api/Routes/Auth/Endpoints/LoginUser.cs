@@ -13,10 +13,10 @@ public record LoginResponse(string Token);
 public static class LoginUser
 {
     public static async
-        Task<Results<Ok<ApiResponse>, BadRequest<ApiResponse>>> Handle(UserManager<ApplicationUser> userManager,
+        Task<Results<Ok<ApiResponse<LoginResponse>>, BadRequest<ApiResponse<LoginResponse>>>> Handle(UserManager<ApplicationUser> userManager,
             TokenService tokenService, LoginRequest model)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<LoginResponse>();
         
         var userFromDb = await userManager.FindByEmailAsync(model.Email);
         if (userFromDb != null)

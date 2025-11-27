@@ -8,13 +8,13 @@ namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 public static class GetProducts
 {
-    public static async Task<Results<Ok<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db)
+    public static async Task<Results<Ok<ApiResponse<Product[]>>, InternalServerError<ApiResponse<Product[]>>>> Handle(ApplicationDbContext db)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Product[]>();
 
         try
         {
-            var products = await db.Products.AsNoTracking().ToListAsync();
+            var products = await db.Products.AsNoTracking().ToArrayAsync();
         
             response.StatusCode = HttpStatusCode.OK;
             response.Result = products;
