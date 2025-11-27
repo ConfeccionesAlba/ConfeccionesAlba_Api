@@ -65,7 +65,7 @@ public class CreateProductTest
         // Assert
         result.Should().NotBeNull();
 
-        var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
+        var createdResult = result.Result as CreatedAtRoute<ApiResponse<Product>>;
         createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -92,9 +92,9 @@ public class CreateProductTest
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<InternalServerError<ApiResponse>>();
+        result.Should().BeOfType<InternalServerError<ApiResponse<Product>>>();
 
-        var internalErrorResult = (InternalServerError<ApiResponse>)result;
+        var internalErrorResult = (InternalServerError<ApiResponse<Product>>)result;
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();
         internalErrorResult.Value.ErrorMessages.Should().HaveCount(1);
@@ -117,9 +117,9 @@ public class CreateProductTest
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result.Should().BeOfType<CreatedAtRoute<ApiResponse<Product>>>();
 
-        var createdResult = (CreatedAtRoute<ApiResponse>)result;
+        var createdResult = (CreatedAtRoute<ApiResponse<Product>>)result;
         createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -148,10 +148,10 @@ public class CreateProductTest
 
         // Assert
         result1.Should().NotBeNull();
-        result1.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result1.Should().BeOfType<CreatedAtRoute<ApiResponse<Product>>>();
 
         result2.Should().NotBeNull();
-        result2.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result2.Should().BeOfType<CreatedAtRoute<ApiResponse<Product>>>();
 
         // Verify both items were added to the database
         var items = await _context.Products.ToListAsync();
@@ -182,9 +182,9 @@ public class CreateProductTest
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result.Should().BeOfType<CreatedAtRoute<ApiResponse<Product>>>();
 
-        var createdResult = (CreatedAtRoute<ApiResponse>)result;
+        var createdResult = (CreatedAtRoute<ApiResponse<Product>>)result;
         createdResult.Value.Result.Should().BeOfType<Product>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();

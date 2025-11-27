@@ -87,7 +87,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Product>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
         okResult.Value.IsSuccess.Should().BeTrue();
@@ -130,7 +130,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var badRequestResult = result.Result as BadRequest<ApiResponse>;
+        var badRequestResult = result.Result as BadRequest<ApiResponse<Product>>;
         badRequestResult.Should().NotBeNull();
         badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         badRequestResult.Value.IsSuccess.Should().BeFalse();
@@ -150,7 +150,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var notFoundResult = result.Result as NotFound<ApiResponse>;
+        var notFoundResult = result.Result as NotFound<ApiResponse<Product>>;
         notFoundResult.Should().NotBeNull();
         notFoundResult.Value.StatusCode.Should().Be(HttpStatusCode.NotFound);
         notFoundResult.Value.IsSuccess.Should().BeFalse();
@@ -196,7 +196,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var internalErrorResult = result.Result as InternalServerError<ApiResponse>;
+        var internalErrorResult = result.Result as InternalServerError<ApiResponse<Product>>;
         internalErrorResult.Should().NotBeNull();
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();
@@ -239,7 +239,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Product>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
         okResult.Value.IsSuccess.Should().BeTrue();
@@ -289,7 +289,7 @@ public class UpdateProductByIdTest
         // Assert
         result.Should().NotBeNull();
 
-        var badRequestResult = result.Result as BadRequest<ApiResponse>;
+        var badRequestResult = result.Result as BadRequest<ApiResponse<Product>>;
         badRequestResult.Should().NotBeNull();
         badRequestResult.Value.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         badRequestResult.Value.IsSuccess.Should().BeFalse();

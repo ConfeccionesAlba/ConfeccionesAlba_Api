@@ -62,13 +62,13 @@ public class GetCategoriesTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Category[]>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Category>>();
+        okResult.Value.Result.Should().BeOfType<Category[]>();
 
-        var returnedCategories = okResult.Value.Result as List<Category>;
+        var returnedCategories = okResult.Value.Result;
         returnedCategories.Should().HaveCount(2);
         returnedCategories.Should().Contain(c => c.Name == "Test Category 1");
         returnedCategories.Should().Contain(c => c.Name == "Test Category 2");
@@ -86,13 +86,13 @@ public class GetCategoriesTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Category[]>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Category>>();
+        okResult.Value.Result.Should().BeOfType<Category[]>();
 
-        var returnedCategories = okResult.Value.Result as List<Category>;
+        var returnedCategories = okResult.Value.Result;
         returnedCategories.Should().HaveCount(0);
     }
 
@@ -109,7 +109,7 @@ public class GetCategoriesTest
         // Assert
         result.Should().NotBeNull();
 
-        var internalErrorResult = result.Result as InternalServerError<ApiResponse>;
+        var internalErrorResult = result.Result as InternalServerError<ApiResponse<Category[]>>;
         internalErrorResult.Should().NotBeNull();
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();

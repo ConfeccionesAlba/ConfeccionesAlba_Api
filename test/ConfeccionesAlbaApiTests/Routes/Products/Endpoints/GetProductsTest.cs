@@ -40,14 +40,14 @@ public class GetProductsTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Product[]>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Product>>();
-        var items = okResult.Value.Result as List<Product>;
+        okResult.Value.Result.Should().BeOfType<Product[]>();
+        var items = okResult.Value.Result;
         items.Should().NotBeNull();
-        items.Count.Should().Be(0);
+        items.Length.Should().Be(0);
     }
 
     [Test]
@@ -90,14 +90,14 @@ public class GetProductsTest
         // Assert
         result.Should().NotBeNull();
 
-        var okResult = result.Result as Ok<ApiResponse>;
+        var okResult = result.Result as Ok<ApiResponse<Product[]>>;
         okResult.Should().NotBeNull();
         okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
-        okResult.Value.Result.Should().BeOfType<List<Product>>();
-        var items = okResult.Value.Result as List<Product>;
+        okResult.Value.Result.Should().BeOfType<Product[]>();
+        var items = okResult.Value.Result;
         items.Should().NotBeNull();
-        items.Count.Should().Be(2);
+        items.Length.Should().Be(2);
 
         // Verify the first item
         var firstItem = items[0];
@@ -125,7 +125,7 @@ public class GetProductsTest
         // Assert
         result.Should().NotBeNull();
 
-        var internalErrorResult = result.Result as InternalServerError<ApiResponse>;
+        var internalErrorResult = result.Result as InternalServerError<ApiResponse<Product[]>>;
         internalErrorResult.Should().NotBeNull();
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();

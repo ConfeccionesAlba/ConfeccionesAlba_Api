@@ -43,7 +43,7 @@ public class CreateCategoryTest
         // Assert
         result.Should().NotBeNull();
 
-        var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
+        var createdResult = result.Result as CreatedAtRoute<ApiResponse<Category>>;
         createdResult.Value.Result.Should().BeOfType<Category>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -68,7 +68,7 @@ public class CreateCategoryTest
         // Assert
         result.Should().NotBeNull();
     
-        var internalErrorResult = result.Result as InternalServerError<ApiResponse>;
+        var internalErrorResult = result.Result as InternalServerError<ApiResponse<Category>>;
         internalErrorResult.Value.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         internalErrorResult.Value.IsSuccess.Should().BeFalse();
         internalErrorResult.Value.ErrorMessages.Should().HaveCount(1);
@@ -88,7 +88,7 @@ public class CreateCategoryTest
         // Assert
         result.Should().NotBeNull();
     
-        var createdResult = result.Result as CreatedAtRoute<ApiResponse>;
+        var createdResult = result.Result as CreatedAtRoute<ApiResponse<Category>>;
         createdResult.Value.Result.Should().BeOfType<Category>();
         createdResult.Value.StatusCode.Should().Be(HttpStatusCode.Created);
         createdResult.Value.IsSuccess.Should().BeTrue();
@@ -114,10 +114,10 @@ public class CreateCategoryTest
     
         // Assert
         result1.Should().NotBeNull();
-        result1.Result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result1.Result.Should().BeOfType<CreatedAtRoute<ApiResponse<Category>>>();
     
         result2.Should().NotBeNull();
-        result2.Result.Should().BeOfType<CreatedAtRoute<ApiResponse>>();
+        result2.Result.Should().BeOfType<CreatedAtRoute<ApiResponse<Category>>>();
     
         // Verify both categories were added to the database
         var categories = await _context.Categories.ToListAsync();
