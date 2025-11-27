@@ -17,9 +17,9 @@ public record ProductCreateRequest(
 
 public static class CreateProduct
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductCreateRequest productRequest)
+    public static async Task<Results<CreatedAtRoute<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductCreateRequest productRequest)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Product>();
         
         try
         {

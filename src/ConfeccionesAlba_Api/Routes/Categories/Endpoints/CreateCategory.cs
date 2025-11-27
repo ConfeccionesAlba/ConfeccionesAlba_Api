@@ -7,9 +7,9 @@ namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 public static class CreateCategory
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse>, BadRequest<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db, CategoryCreateRequest categoryRequest)
+    public static async Task<Results<CreatedAtRoute<ApiResponse<Category>>, BadRequest<ApiResponse<Category>>, InternalServerError<ApiResponse<Category>>>> Handle(ApplicationDbContext db, CategoryCreateRequest categoryRequest)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Category>();
         
         try
         {

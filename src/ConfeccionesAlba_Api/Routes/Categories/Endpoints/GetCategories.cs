@@ -8,13 +8,13 @@ namespace ConfeccionesAlba_Api.Routes.Categories.Endpoints;
 
 public static class GetCategories
 {
-    public static async Task<Results<Ok<ApiResponse>, InternalServerError<ApiResponse>>> Handle(ApplicationDbContext db)
+    public static async Task<Results<Ok<ApiResponse<Category[]>>, InternalServerError<ApiResponse<Category[]>>>> Handle(ApplicationDbContext db)
     {
-        var response = new ApiResponse();
+        var response = new ApiResponse<Category[]>();
 
         try
         {
-            var categories = await db.Categories.ToListAsync();
+            var categories = await db.Categories.AsNoTracking().ToArrayAsync();
 
             response.StatusCode = HttpStatusCode.OK;
             response.Result = categories;

@@ -35,7 +35,7 @@ public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
             return await next(context);
         }
 
-        var response = new ApiResponse
+        var response = new ApiResponse<object>
         {
             IsSuccess = false,
             StatusCode = HttpStatusCode.BadRequest
