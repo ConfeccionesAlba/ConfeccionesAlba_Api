@@ -12,6 +12,5 @@ public class ProductCreateRequestValidator : AbstractValidator<ProductCreateRequ
         RuleFor(x => x.CategoryId).NotNull().GreaterThan(0);
         RuleFor(x => x.PriceReference).NotNull().GreaterThanOrEqualTo(0);
         RuleFor(x => x.IsVisible).NotNull();
-        RuleFor(x => x.File).NotNull().Must(file => file.Length > 0).WithMessage("File size must be greater than 0");
     }
 }

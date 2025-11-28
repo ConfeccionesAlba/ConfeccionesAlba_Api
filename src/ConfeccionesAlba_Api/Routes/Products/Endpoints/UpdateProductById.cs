@@ -10,17 +10,23 @@ namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
 public class ProductUpdateRequest
 {
-    [FromForm] public int Id { get; set; }
-    [FromForm] public string? Description { get; set; }
-    [FromForm] public int? CategoryId { get; set; }
-    [FromForm] public decimal? PriceReference { get; set; }
-    [FromForm] public bool? IsVisible { get; set; }
-    [FromForm] public IFormFile? File { get; set; }
+    public int Id { get; set; }
+    public string? Description { get; set; }
+    public int? CategoryId { get; set; }
+    public decimal? PriceReference { get; set; }
+    public bool? IsVisible { get; set; }
 }
 
 public static class UpdateProductById
 {
-    public static async Task<Results<Ok<ApiResponse<Product>>, NotFound<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductUpdateRequest productRequest, int id)
+    public static async
+        Task<Results<Ok<ApiResponse<Product>>,
+            NotFound<ApiResponse<Product>>,
+            BadRequest<ApiResponse<Product>>,
+            InternalServerError<ApiResponse<Product>>>> 
+        Handle(ApplicationDbContext db,
+            ProductUpdateRequest productRequest,
+            int id)
     {
         var response = new ApiResponse<Product>();
         
@@ -45,20 +51,6 @@ public static class UpdateProductById
                 return TypedResults.NotFound(response);
             }
 
-            // Update item image
-            var file = productRequest.File;
-            if (file is { Length: > 0 })
-            {
-                var imageNameFromDb = productFromDb.Image.Name; // TODO: Extract file extension from here
-                await imageProcessor.RemoveAsync(imageNameFromDb);
-                
-                var newFileName = $"{Guid.NewGuid().ToString()}.webp";
-                var url = await imageProcessor.ProcessAsync(newFileName, file.ContentType, file.OpenReadStream());
-                
-                productFromDb.Image.Name = newFileName;
-                productFromDb.Image.Url = url;
-            }
-
             // Update item properties
             if (!string.IsNullOrEmpty(productRequest.Description))
             {
@@ -81,9 +73,7 @@ public static class UpdateProductById
             }
 
             // Save to database
-            var entry = db.Entry(productFromDb);
-
-            if (entry.State == EntityState.Modified)
+            if (db.ChangeTracker.HasChanges())
             {
                 await db.SaveChangesAsync();
             }
@@ -93,7 +83,6 @@ public static class UpdateProductById
                 response.StatusCode = HttpStatusCode.BadRequest;
                 response.ErrorMessages.Add("No changes detected in submitted data");
                 
-
                 return TypedResults.BadRequest(response);
             }
             

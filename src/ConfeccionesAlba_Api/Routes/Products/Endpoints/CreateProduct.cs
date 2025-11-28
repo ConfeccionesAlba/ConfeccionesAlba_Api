@@ -1,37 +1,33 @@
 using System.Net;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
-using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ConfeccionesAlba_Api.Routes.Products.Endpoints;
 
-public record ProductCreateRequest(
-    [FromForm] string Name,
-    [FromForm] string Description,
-    [FromForm] int CategoryId,
-    [FromForm] decimal PriceReference,
-    [FromForm] bool IsVisible,
-    [FromForm] IFormFile File);
+public class ProductCreateRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
+    public decimal PriceReference { get; set; }
+    public bool IsVisible { get; set; }
+}
 
 public static class CreateProduct
 {
-    public static async Task<Results<CreatedAtRoute<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, IImageProcessor imageProcessor, [FromForm] ProductCreateRequest productRequest)
+    public static async Task<Results<
+            CreatedAtRoute<ApiResponse<Product>>,
+            BadRequest<ApiResponse<Product>>,
+            InternalServerError<ApiResponse<Product>>>>
+        Handle(ApplicationDbContext db, ProductCreateRequest productRequest)
     {
         var response = new ApiResponse<Product>();
         
         try
         {
-            // Get file
-            var file = productRequest.File;
-            
-            var newFileName = $"{Guid.NewGuid()}.webp"; // TODO: Extract file extension from here
-            
-            var url = await imageProcessor.ProcessAsync(newFileName, file.ContentType, file.OpenReadStream());
-
             // Save to database
-            var image = new Image { Name = newFileName, Url = url };
+            var image = new Image { Name = string.Empty, Url = string.Empty }; // TODO: Research the new nullable ComplexType
 
             var newProduct = new Product
             {

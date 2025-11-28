@@ -34,6 +34,13 @@ public static class ProductEndpointGroup
             .AddEndpointFilter<ValidationFilter<ProductUpdateRequest>>()
             .DisableAntiforgery()
             .RequireAuthorization(policy => policy.RequirePermission(Permissions.ProductsUpdate));
+
+        group.MapPost("/{id:int}/images", UploadProductImage.Handle)
+            .WithName(ProductsEndpointNames.UploadImage)
+            .WithSummary("Upload Image")
+            .DisableAntiforgery()
+            .RequireAuthorization(policy =>
+                policy.RequirePermission(Permissions.ProductImageUpload));
         
         return group;
     }
@@ -45,4 +52,5 @@ public static class ProductsEndpointNames
     public const string GetProductById = "GetProductById";
     public const string CreateProduct = "CreateProduct";
     public const string UpdateProduct = "UpdateProduct";
+    public const string UploadImage = "UploadImage";
 } 
