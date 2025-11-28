@@ -25,7 +25,6 @@ public static class UpdateProductById
             BadRequest<ApiResponse<Product>>,
             InternalServerError<ApiResponse<Product>>>> 
         Handle(ApplicationDbContext db,
-            IImageProcessor imageProcessor,
             ProductUpdateRequest productRequest,
             int id)
     {
