@@ -3,12 +3,9 @@ using AwesomeAssertions;
 using ConfeccionesAlba_Api.Data;
 using ConfeccionesAlba_Api.Models;
 using ConfeccionesAlba_Api.Routes.Products.Endpoints;
-using ConfeccionesAlba_Api.Services.Images.Interfaces;
 using ConfeccionesAlbaApiTests.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace ConfeccionesAlbaApiTests.Routes.Products.Endpoints;
 
