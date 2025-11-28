@@ -27,8 +27,6 @@ public static class CreateProduct
         try
         {
             // Save to database
-            var image = new Image { Name = string.Empty, Url = string.Empty }; // TODO: Research the new nullable ComplexType
-
             var newProduct = new Product
             {
                 Name = productRequest.Name,
@@ -36,7 +34,6 @@ public static class CreateProduct
                 CategoryId = productRequest.CategoryId,
                 PriceReference = productRequest.PriceReference,
                 IsVisible = productRequest.IsVisible,
-                Image = image,
             };
 
             db.Products.Add(newProduct);
