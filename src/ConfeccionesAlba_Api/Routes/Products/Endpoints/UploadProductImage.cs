@@ -33,8 +33,8 @@ public static class UploadProductImage
             {
                 response.IsSuccess = false;
                 response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Product Id not found");
-                return TypedResults.NotFound(response);
+                response.ErrorMessages.Add("Invalid image received");
+                return TypedResults.BadRequest(response);
             }
             
             var productFromDb = await db.Products.FindAsync(id);
@@ -42,8 +42,8 @@ public static class UploadProductImage
             if (productFromDb == null)
             {
                 response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Invalid image received");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                response.ErrorMessages.Add("Product Id not found");
                 return TypedResults.BadRequest(response);
             }
 
