@@ -12,4 +12,5 @@ public enum Permissions
     ProductsCreate,
     ProductsUpdate,
     ProductsDelete,
+    ProductImageUpload,
 }
