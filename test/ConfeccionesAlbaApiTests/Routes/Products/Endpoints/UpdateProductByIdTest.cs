@@ -18,8 +18,7 @@ public class UpdateProductByIdTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
-    private Mock<IImageProcessor> _imageProcessorMock;
-    private Mock<IFormFile> _formFileMock;
+    private Product _testItem;
 
     [SetUp]
     public void SetUp()
@@ -29,18 +28,19 @@ public class UpdateProductByIdTest
         _context.Categories.Add(new Category { Name = "category1", Description = "category1 desc" });
         _context.Categories.Add(new Category { Name = "category2", Description = "category2 desc" });
         
-        const string testImageUrl = "https://example.com/images/test-image.webp";
-        _imageProcessorMock = new Mock<IImageProcessor>();
-        _imageProcessorMock
-            .Setup(x => x.ProcessAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>()))
-            .ReturnsAsync(testImageUrl);
-        _imageProcessorMock.Setup(x => x.RemoveAsync(It.IsAny<string>()));
+        // Create a test item in the database
+        _testItem = new Product
+        {
+            Name = "Test Item",
+            Description = "Original description",
+            CategoryId = 1,
+            PriceReference = 10.99m,
+            IsVisible = true,
+            Image = new Image { Name = "test name", Url = "test url" }
+        };
 
-        _formFileMock = new Mock<IFormFile>();
-        _formFileMock.Setup(f => f.Length).Returns(100);
-        _formFileMock.Setup(f => f.ContentType).Returns("image/webp");
-        _formFileMock.Setup(f => f.OpenReadStream()).Returns(Stream.Null);
-        _formFileMock.Setup(f => f.Name).Returns("file");
+        _context.Products.Add(_testItem);
+        _context.SaveChanges();
     }
 
     [TearDown]
@@ -54,35 +54,19 @@ public class UpdateProductByIdTest
     public async Task Handle_SuccessfulUpdate_ReturnsOk()
     {
         // Arrange
-        // Create a test item in the database
-        var testItem = new Product
-        {
-            Name = "Test Item",
-            Description = "Original description",
-            CategoryId = 1,
-            PriceReference = 10.99m,
-            IsVisible = true,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow,
-            Image = new Image {Name="test name", Url = "test url"}
-        };
-
-        await _context.Products.AddAsync(testItem);
-        await _context.SaveChangesAsync();
 
         // Create update DTO with updated values
         var updateDto = new ProductUpdateRequest
         {
-            Id = testItem.Id,
+            Id = _testItem.Id,
             Description = "Updated description",
             CategoryId = 2,
             PriceReference = 15.99m,
             IsVisible = false,
-            File = _formFileMock.Object
         };
 
         // Act
-        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, _testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -93,7 +77,7 @@ public class UpdateProductByIdTest
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was updated in the database
-        var updatedItem = await _context.Products.FindAsync(testItem.Id);
+        var updatedItem = await _context.Products.FindAsync(_testItem.Id);
         updatedItem.Should().NotBeNull();
         updatedItem.Description.Should().Be("Updated description");
         updatedItem.CategoryId.Should().Be(2);
@@ -105,27 +89,12 @@ public class UpdateProductByIdTest
     public async Task Handle_MismatchedId_ReturnsBadRequest()
     {
         // Arrange
-        // Create a test item in the database
-        var testItem = new Product
-        {
-            Name = "Test Item",
-            Description = "Original description",
-            CategoryId = 1,
-            PriceReference = 10.99m,
-            IsVisible = true,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow,
-            Image = new Image {Name="test name", Url = "test url"}
-        };
-
-        await _context.Products.AddAsync(testItem);
-        await _context.SaveChangesAsync();
 
         // Create update DTO with mismatched ID
-        var updateDto = new ProductUpdateRequest { Id = testItem.Id + 1 };
+        var updateDto = new ProductUpdateRequest { Id = _testItem.Id + 1 };
 
         // Act
-        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, _testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -145,7 +114,7 @@ public class UpdateProductByIdTest
         var updateDto = new ProductUpdateRequest { Id = 999 }; // Non-existent ID
 
         // Act
-        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, 999);
+        var result = await UpdateProductById.Handle(_context, updateDto, 999);
 
         // Assert
         result.Should().NotBeNull();
@@ -161,26 +130,10 @@ public class UpdateProductByIdTest
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
     {
         // Arrange
-        // Create a test item in the database
-        var testItem = new Product
-        {
-            Name = "Test Item",
-            Description = "Original description",
-            CategoryId = 1,
-            PriceReference = 10.99m,
-            IsVisible = true,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow,
-            Image = new Image {Name="test name", Url = "test url"}
-        };
-
-        await _context.Products.AddAsync(testItem);
-        await _context.SaveChangesAsync();
-
         // Create update DTO
         var updateDto = new ProductUpdateRequest()
         {
-            Id = testItem.Id,
+            Id = _testItem.Id,
             Description = "Updated description",
             CategoryId = 2,
             PriceReference = 15.99m,
@@ -191,7 +144,7 @@ public class UpdateProductByIdTest
         await _context.DisposeAsync();
 
         // Act
-        var result = await UpdateProductById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), _imageProcessorMock.Object, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), updateDto, _testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -207,34 +160,18 @@ public class UpdateProductByIdTest
     public async Task Handle_PartialUpdate_ReturnsOk()
     {
         // Arrange
-        // Create a test item in the database
-        var testItem = new Product
-        {
-            Name = "Test Item",
-            Description = "Original description",
-            CategoryId = 1,
-            PriceReference = 10.99m,
-            IsVisible = true,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow,
-            Image = new Image {Name="test name", Url = "test url"}
-        };
-
-        await _context.Products.AddAsync(testItem);
-        await _context.SaveChangesAsync();
-
         // Create update DTO with only some fields updated
         var updateDto = new ProductUpdateRequest()
         {
-            Id = testItem.Id,
+            Id = _testItem.Id,
             Description = "Updated description", // Only updating description
-            CategoryId = testItem.CategoryId, // Keeping category same
-            PriceReference = testItem.PriceReference, // Keeping price same
-            IsVisible = testItem.IsVisible // Keeping visibility same
+            CategoryId = _testItem.CategoryId, // Keeping category same
+            PriceReference = _testItem.PriceReference, // Keeping price same
+            IsVisible = _testItem.IsVisible // Keeping visibility same
         };
 
     // Act
-        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, _testItem.Id);
 
         // Assert
         result.Should().NotBeNull();
@@ -245,7 +182,7 @@ public class UpdateProductByIdTest
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify only the description was updated
-        var updatedItem = await _context.Products.FindAsync(testItem.Id);
+        var updatedItem = await _context.Products.FindAsync(_testItem.Id);
         updatedItem.Should().NotBeNull();
         updatedItem.Description.Should().Be("Updated description");
         updatedItem.CategoryId.Should().Be(1); // Should remain unchanged
@@ -257,34 +194,19 @@ public class UpdateProductByIdTest
     public async Task Handle_NoChangesDetected_ReturnsBadRequest()
     {
         // Arrange
-        // Create a test item in the database
-        var testItem = new Product
-        {
-            Name = "Test Item",
-            Description = "Original description",
-            CategoryId = 1,
-            PriceReference = 10.99m,
-            IsVisible = true,
-            CreatedOn = DateTime.UtcNow,
-            UpdatedOn = DateTime.UtcNow,
-            Image = new Image {Name="test name", Url = "test url"}
-        };
-
-        await _context.Products.AddAsync(testItem);
-        await _context.SaveChangesAsync();
-
+        
         // Create update DTO with same values (no changes)
         var updateDto = new ProductUpdateRequest
         {
-            Id = testItem.Id,
-            Description = testItem.Description, // Same description
-            CategoryId = testItem.CategoryId, // Same category
-            PriceReference = testItem.PriceReference, // Same price
-            IsVisible = testItem.IsVisible // Same visibility
+            Id = _testItem.Id,
+            Description = _testItem.Description, // Same description
+            CategoryId = _testItem.CategoryId, // Same category
+            PriceReference = _testItem.PriceReference, // Same price
+            IsVisible = _testItem.IsVisible // Same visibility
         };
 
         // Act
-        var result = await UpdateProductById.Handle(_context, _imageProcessorMock.Object, updateDto, testItem.Id);
+        var result = await UpdateProductById.Handle(_context, updateDto, _testItem.Id);
 
         // Assert
         result.Should().NotBeNull();

@@ -18,8 +18,6 @@ public class CreateProductTest
 {
     private DbContextFactoryFixture _fixture;
     private ApplicationDbContext _context;
-    private Mock<IImageProcessor> _imageProcessorMock;
-    private Mock<IFormFile> _formFileMock;
 
     [SetUp]
     public void SetUp()
@@ -27,18 +25,6 @@ public class CreateProductTest
         _fixture = new DbContextFactoryFixture();
         _context = _fixture.GetDbContext();
         _context.Categories.Add(new Category { Name = "category1", Description = "category1 desc" });
-
-        const string testImageUrl = "https://example.com/images/test-image.webp";
-        _imageProcessorMock = new Mock<IImageProcessor>();
-        _imageProcessorMock
-            .Setup(x => x.ProcessAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>()))
-            .ReturnsAsync(testImageUrl);
-
-        _formFileMock = new Mock<IFormFile>();
-        _formFileMock.Setup(f => f.Length).Returns(100);
-        _formFileMock.Setup(f => f.ContentType).Returns("image/webp");
-        _formFileMock.Setup(f => f.OpenReadStream()).Returns(Stream.Null);
-        _formFileMock.Setup(f => f.Name).Returns("file");
     }
 
     [TearDown]
@@ -52,15 +38,17 @@ public class CreateProductTest
     public async Task Handle_SuccessfulItemCreation_ReturnsCreatedAtRoute()
     {
         // Arrange
-        
-        var itemDto = new ProductCreateRequest("Test Item", 
-            "Test Description",
-            1, // Assuming category exists
-            19.99m,
-            IsVisible: true, _formFileMock.Object);
+        var itemDto = new ProductCreateRequest
+        {
+            Name = "Test Item",
+            Description = "Test Description",
+            CategoryId = 1,
+            PriceReference = 19.99m,
+            IsVisible = true
+        };
 
         // Act
-        var result = await CreateProduct.Handle(_context, _imageProcessorMock.Object, itemDto);
+        var result = await CreateProduct.Handle(_context, itemDto);
 
         // Assert
         result.Should().NotBeNull();
@@ -84,11 +72,18 @@ public class CreateProductTest
     public async Task Handle_DatabaseError_ReturnsInternalServerError()
     {
         // Arrange
-        var itemDto = new ProductCreateRequest("Test Item", "Test Description", 1, 19.99m, true, _formFileMock.Object);
+        var itemDto = new ProductCreateRequest
+        {
+            Name = "Test Item",
+            Description = "Test Description",
+            CategoryId = 1,
+            PriceReference = 19.99m,
+            IsVisible = true
+        };
 
         // Act - Simulate a database error by disposing the context
         await _context.DisposeAsync();
-        var result = (await CreateProduct.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()),_imageProcessorMock.Object, itemDto)).Result;
+        var result = (await CreateProduct.Handle(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()), itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();
@@ -104,16 +99,17 @@ public class CreateProductTest
     public async Task Handle_ValidItemWithMinimalData_SuccessfullyCreatesItem()
     {
         // Arrange
-        var itemDto = new ProductCreateRequest("Test Item", 
-            "", // Minimal description
-            1, 
-            0m, // Minimum price
-            false, // Non-default visibility
-            _formFileMock.Object
-        );
-
+        var itemDto = new ProductCreateRequest
+        {
+            Name = "Test Item",
+            Description = "",
+            CategoryId = 1,
+            PriceReference = 0m,
+            IsVisible = false
+        };
+        
         // Act
-        var result = (await CreateProduct.Handle(_context, _imageProcessorMock.Object, itemDto)).Result;
+        var result = (await CreateProduct.Handle(_context, itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();
@@ -138,13 +134,28 @@ public class CreateProductTest
     public async Task Handle_MultipleValidItems_CreatesAllSuccessfully()
     {
         // Arrange
-        var itemDto1 = new ProductCreateRequest("Test Item 1", "Test Description 1", 1, 19.99m, true, _formFileMock.Object);
-
-        var itemDto2 = new ProductCreateRequest("Test Item 2", "Test Description 2", 1, 29.99m, false, _formFileMock.Object);
+        
+        var itemDto1 = new ProductCreateRequest
+        {
+            Name = "Test Item 1",
+            Description = "Test Description 1",
+            CategoryId = 1,
+            PriceReference = 19.99m,
+            IsVisible = true
+        };
+        
+        var itemDto2 = new ProductCreateRequest
+        {
+            Name = "Test Item 2",
+            Description = "Test Description 2",
+            CategoryId = 1,
+            PriceReference = 29.99m,
+            IsVisible = false
+        };
 
         // Act
-        var result1 = (await CreateProduct.Handle(_context, _imageProcessorMock.Object, itemDto1)).Result;
-        var result2 = (await CreateProduct.Handle(_context, _imageProcessorMock.Object, itemDto2)).Result;
+        var result1 = (await CreateProduct.Handle(_context, itemDto1)).Result;
+        var result2 = (await CreateProduct.Handle(_context, itemDto2)).Result;
 
         // Assert
         result1.Should().NotBeNull();
@@ -175,10 +186,17 @@ public class CreateProductTest
     {
         // Arrange
         var longDescription = new string('a', 5000); // Max length
-        var itemDto = new ProductCreateRequest("Test Item", longDescription, 1, 19.99m, true, _formFileMock.Object);
+        var itemDto = new ProductCreateRequest
+        {
+            Name = "Test Item",
+            Description = longDescription,
+            CategoryId = 1,
+            PriceReference = 19.99m,
+            IsVisible = true
+        };
         
         // Act
-        var result = (await CreateProduct.Handle(_context, _imageProcessorMock.Object, itemDto)).Result;
+        var result = (await CreateProduct.Handle(_context, itemDto)).Result;
 
         // Assert
         result.Should().NotBeNull();
