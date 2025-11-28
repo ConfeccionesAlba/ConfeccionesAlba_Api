@@ -24,7 +24,7 @@ public class Product : IAuditableEntity
     
     public decimal PriceReference { get; set; }
 
-    public Image Image { get; set; } = null!;
+    public Image? Image { get; set; }
     
     public bool IsVisible { get; set; } = true;
 
