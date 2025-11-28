@@ -34,7 +34,6 @@ namespace ConfeccionesAlbaApiTests
             var category = new Category
             {
                 Name = "Test Category",
-                Slug = "test-category",
                 Description = "Test Description"
             };
 
@@ -55,7 +54,6 @@ namespace ConfeccionesAlbaApiTests
             var category = new Category
             {
                 Name = "Test Category",
-                Slug = "test-category",
                 Description = "Test Description"
             };
 
@@ -144,7 +142,6 @@ namespace ConfeccionesAlbaApiTests
             var category = new Category
             {
                 Name = "Test Category",
-                Slug = "test-category",
                 Description = "Test Description"
             };
 
