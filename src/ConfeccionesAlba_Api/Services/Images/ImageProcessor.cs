@@ -8,10 +8,9 @@ public class ImageProcessor(IS3Client s3Client, IImageOptimizer webpImageOptimiz
 {
     public async Task<string> ProcessAsync(string name, string contentType, Stream imageStream)
     {
-        var optimizedImage = await webpImageOptimizer.OptimizeAsync(imageStream);
-        using var optimizeMemoryStream = new MemoryStream(optimizedImage);
+        await using var optimizedImageStream = await webpImageOptimizer.OptimizeAsync(imageStream);
 
-        var fileRequest = new FileUploadRequest(name, optimizeMemoryStream, contentType);
+        var fileRequest = new FileUploadRequest(name, optimizedImageStream, contentType);
 
         return await s3Client.UploadImage(fileRequest);
     }
