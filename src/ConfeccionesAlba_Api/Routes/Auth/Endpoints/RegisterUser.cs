@@ -13,7 +13,6 @@ public static class RegisterUser
     public static async Task<Results<Ok<ApiResponse<object>>, BadRequest<ApiResponse<object>>, InternalServerError<ApiResponse<object>>>> Handle(
         UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, RegisterRequest model)
     {
-        var response = new ApiResponse<object>();
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync();
         try
@@ -32,28 +31,20 @@ public static class RegisterUser
                 await userManager.AddToRoleAsync(newUser, UserRolesValues.Publisher);
                 await transaction.CommitAsync();
 
-                response.StatusCode = HttpStatusCode.OK;
-                response.IsSuccess = true;
-                return TypedResults.Ok(response);
+                return TypedResults.Ok(
+                    ApiResponse.Success<object>());
             }
 
-            foreach (var error in result.Errors)
-            {
-                response.ErrorMessages.Add(error.Description);
-            }
-
-            response.StatusCode = HttpStatusCode.BadRequest;
-            response.IsSuccess = false;
             await transaction.RollbackAsync();
-            return TypedResults.BadRequest(response);
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<object>(result.Errors.Select(e => e.Description)));
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
             await transaction.RollbackAsync();
-            response.ErrorMessages.Add(ex.Message);
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.IsSuccess = false;
-            return TypedResults.InternalServerError(response);
+            
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<object>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

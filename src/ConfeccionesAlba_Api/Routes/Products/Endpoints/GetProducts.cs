@@ -10,23 +10,17 @@ public static class GetProducts
 {
     public static async Task<Results<Ok<ApiResponse<Product[]>>, InternalServerError<ApiResponse<Product[]>>>> Handle(ApplicationDbContext db)
     {
-        var response = new ApiResponse<Product[]>();
-
         try
         {
             var products = await db.Products.AsNoTracking().ToArrayAsync();
         
-            response.StatusCode = HttpStatusCode.OK;
-            response.Result = products;
-        
-            return TypedResults.Ok(response);
+            return TypedResults.Ok(
+                ApiResponse.Success(products));
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Product[]>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

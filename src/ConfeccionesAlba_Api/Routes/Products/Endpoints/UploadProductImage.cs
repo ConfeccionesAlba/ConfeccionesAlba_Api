@@ -25,26 +25,20 @@ public static class UploadProductImage
             [FromRoute] int id,
             [FromForm] IFormFile image)
     {
-        var response = new ApiResponse<UploadImageResponse>();
-
         try
         {
             if (image is not { Length: > 0 })
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Invalid image received");
-                return TypedResults.BadRequest(response);
+                return TypedResults.BadRequest(
+                    ApiResponse.Fail<UploadImageResponse>("Invalid image received"));
             }
             
             var productFromDb = await db.Products.FindAsync(id);
             
             if (productFromDb == null)
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Product Id not found");
-                return TypedResults.BadRequest(response);
+                return TypedResults.BadRequest(
+                    ApiResponse.Fail<UploadImageResponse>("Product Id not found"));
             }
 
             var imageNameFromDb = productFromDb.Image.Name; // TODO: Extract file extension from here
@@ -58,16 +52,13 @@ public static class UploadProductImage
             
             await db.SaveChangesAsync();
 
-            response.StatusCode = HttpStatusCode.OK;
-            response.Result = new UploadImageResponse { Url = url };
-            return TypedResults.Ok(response);
+            return TypedResults.Ok(
+                ApiResponse.Success(new UploadImageResponse { Url = url }));
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<UploadImageResponse>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

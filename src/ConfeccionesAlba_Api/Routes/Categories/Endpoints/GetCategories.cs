@@ -10,23 +10,17 @@ public static class GetCategories
 {
     public static async Task<Results<Ok<ApiResponse<Category[]>>, InternalServerError<ApiResponse<Category[]>>>> Handle(ApplicationDbContext db)
     {
-        var response = new ApiResponse<Category[]>();
-
         try
         {
             var categories = await db.Categories.AsNoTracking().ToArrayAsync();
 
-            response.StatusCode = HttpStatusCode.OK;
-            response.Result = categories;
-        
-            return TypedResults.Ok(response);
+            return TypedResults.Ok(
+                ApiResponse.Success(categories));
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Category[]>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

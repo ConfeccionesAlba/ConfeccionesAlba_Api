@@ -22,8 +22,6 @@ public static class CreateProduct
             InternalServerError<ApiResponse<Product>>>>
         Handle(ApplicationDbContext db, ProductCreateRequest productRequest)
     {
-        var response = new ApiResponse<Product>();
-        
         try
         {
             // Save to database
@@ -39,17 +37,15 @@ public static class CreateProduct
             db.Products.Add(newProduct);
             await db.SaveChangesAsync();
 
-            response.Result = newProduct;
-            response.StatusCode = HttpStatusCode.Created;
-
-            return TypedResults.CreatedAtRoute(response, ProductsEndpointNames.GetProductById, new { newProduct.Id });
+            return TypedResults.CreatedAtRoute(
+                ApiResponse.Success(newProduct, HttpStatusCode.Created), 
+                ProductsEndpointNames.GetProductById, 
+                new { newProduct.Id });
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Product>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

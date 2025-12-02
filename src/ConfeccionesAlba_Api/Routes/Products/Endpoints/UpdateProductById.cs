@@ -28,27 +28,20 @@ public static class UpdateProductById
             ProductUpdateRequest productRequest,
             int id)
     {
-        var response = new ApiResponse<Product>();
-        
         try
         {
             if (productRequest.Id != id)
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("Invalid Product id");
-
-                return TypedResults.BadRequest(response);
+                return TypedResults.BadRequest(
+                    ApiResponse.Fail<Product>("Invalid Product id"));
             }
             
             var productFromDb = await db.Products.FindAsync(id);
             
             if (productFromDb == null)
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Product not found");
-                return TypedResults.NotFound(response);
+                return TypedResults.NotFound(
+                    ApiResponse.Fail<Product>("Product not found", HttpStatusCode.NotFound));
             }
 
             // Update item properties
@@ -73,29 +66,21 @@ public static class UpdateProductById
             }
 
             // Save to database
-            if (db.ChangeTracker.HasChanges())
+            if (!db.ChangeTracker.HasChanges())
             {
-                await db.SaveChangesAsync();
+                return TypedResults.BadRequest(
+                    ApiResponse.Fail<Product>("No changes detected in submitted data"));
             }
-            else
-            {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.ErrorMessages.Add("No changes detected in submitted data");
-                
-                return TypedResults.BadRequest(response);
-            }
-            
-            response.StatusCode = HttpStatusCode.NoContent;
 
-            return TypedResults.Ok(response);
+            await db.SaveChangesAsync();
+            
+            return TypedResults.Ok(
+                ApiResponse.Success<Product>());
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Product>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }
