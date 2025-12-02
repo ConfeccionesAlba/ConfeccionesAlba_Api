@@ -7,7 +7,7 @@ namespace ConfeccionesAlba_Api.Services.Images;
 
 public class WebpImageOptimizer : IImageOptimizer
 {
-    public async Task<byte[]> OptimizeAsync(Stream inputStream, int maxWidth = 1280, int quality = 85)
+    public async Task<Stream> OptimizeAsync(Stream inputStream, int maxWidth = 1280, int quality = 85)
     {
         using var image = await Image.LoadAsync(inputStream);
 
@@ -18,9 +18,9 @@ public class WebpImageOptimizer : IImageOptimizer
             image.Mutate(x => x.Resize(maxWidth, newHeight));
         }
 
-        using var outputStream = new MemoryStream();
+        var outputStream = new MemoryStream();
         var encoder = new WebpEncoder { Quality = quality };
         await image.SaveAsync(outputStream, encoder);
-        return outputStream.ToArray();
+        return outputStream;
     }
 }
