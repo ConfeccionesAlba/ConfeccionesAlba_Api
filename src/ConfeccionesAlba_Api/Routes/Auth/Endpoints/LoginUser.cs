@@ -16,33 +16,25 @@ public static class LoginUser
         Task<Results<Ok<ApiResponse<LoginResponse>>, BadRequest<ApiResponse<LoginResponse>>>> Handle(UserManager<ApplicationUser> userManager,
             TokenService tokenService, LoginRequest model)
     {
-        var response = new ApiResponse<LoginResponse>();
-        
         var userFromDb = await userManager.FindByEmailAsync(model.Email);
-        if (userFromDb != null)
+        if (userFromDb == null)
         {
-            var isValid = await userManager.CheckPasswordAsync(userFromDb, model.Password);
-            if (!isValid)
-            {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.IsSuccess = false;
-                response.ErrorMessages.Add("Invalid Credentials");
-                return TypedResults.BadRequest(response);
-            }
-
-            var accessToken = await tokenService.GenerateTokenAsync(userFromDb);
-
-            var loginResponse = new LoginResponse(accessToken);
-
-            response.Result = loginResponse;
-            response.StatusCode = HttpStatusCode.OK;
-            response.IsSuccess = true;
-            return TypedResults.Ok(response);
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<LoginResponse>("Invalid Credentials"));
+        }
+        
+        var isValid = await userManager.CheckPasswordAsync(userFromDb, model.Password);
+        if (!isValid)
+        {
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<LoginResponse>("Invalid Credentials"));
         }
 
-        response.StatusCode = HttpStatusCode.BadRequest;
-        response.IsSuccess = false;
-        response.ErrorMessages.Add("Invalid Credentials");
-        return TypedResults.BadRequest(response);
+        var accessToken = await tokenService.GenerateTokenAsync(userFromDb);
+
+        var loginResponse = new LoginResponse(accessToken);
+            
+        return TypedResults.Ok(
+            ApiResponse.Success(loginResponse));
     }
 }

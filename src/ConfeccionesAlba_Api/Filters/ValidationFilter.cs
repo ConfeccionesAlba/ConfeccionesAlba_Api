@@ -34,15 +34,8 @@ public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
         {
             return await next(context);
         }
-
-        var response = new ApiResponse<object>
-        {
-            IsSuccess = false,
-            StatusCode = HttpStatusCode.BadRequest
-        };
-
-        response.ErrorMessages.AddRange(validationResult.Errors.Select(error => error.ErrorMessage));
-
-        return TypedResults.BadRequest(response);
+        
+        return TypedResults.BadRequest(
+            ApiResponse.Fail<object>(validationResult.Errors.Select(error => error.ErrorMessage)));
     }
 }

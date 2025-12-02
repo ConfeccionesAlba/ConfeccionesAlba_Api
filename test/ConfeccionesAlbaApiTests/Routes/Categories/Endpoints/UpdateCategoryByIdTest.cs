@@ -56,7 +56,7 @@ public class UpdateCategoryByIdTest
 
         var okResult = result.Result as Ok<ApiResponse<Category>>;
         okResult.Should().NotBeNull();
-        okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
         okResult.Value.ErrorMessages.Should().BeEmpty();
 
@@ -167,7 +167,7 @@ public class UpdateCategoryByIdTest
 
         var okResult = result.Result as Ok<ApiResponse<Category>>;
         okResult.Should().NotBeNull();
-        okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
         okResult.Value.ErrorMessages.Should().BeEmpty();
 

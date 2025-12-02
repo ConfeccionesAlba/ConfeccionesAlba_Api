@@ -11,15 +11,10 @@ public static class UpdateCategoryById
 {
     public static async Task<Results<Ok<ApiResponse<Category>>, NotFound<ApiResponse<Category>>, BadRequest<ApiResponse<Category>>, InternalServerError<ApiResponse<Category>>>> Handle(ApplicationDbContext db, CategoryUpdateRequest categoryRequest, int id)
     {
-        var response = new ApiResponse<Category>();
-
         if (categoryRequest.Id != id)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.Add("Invalid category id");
-
-            return TypedResults.BadRequest(response);
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<Category>("Invalid category id"));
         }
         
         try
@@ -28,10 +23,8 @@ public static class UpdateCategoryById
             
             if (categoryFromDb == null)
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Category not found");
-                return TypedResults.NotFound(response);
+                return TypedResults.NotFound(
+                    ApiResponse.Fail<Category>("Category not found", HttpStatusCode.NotFound));
             }
 
             if (!string.IsNullOrEmpty(categoryRequest.Description))
@@ -41,16 +34,13 @@ public static class UpdateCategoryById
 
             await db.SaveChangesAsync();
             
-            response.StatusCode = HttpStatusCode.NoContent;
-
-            return TypedResults.Ok(response);
+            return TypedResults.Ok(
+                ApiResponse.Success<Category>());
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Category>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }

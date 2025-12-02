@@ -70,7 +70,7 @@ public class UpdateProductByIdTest
 
         var okResult = result.Result as Ok<ApiResponse<Product>>;
         okResult.Should().NotBeNull();
-        okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify the item was updated in the database
@@ -175,7 +175,7 @@ public class UpdateProductByIdTest
 
         var okResult = result.Result as Ok<ApiResponse<Product>>;
         okResult.Should().NotBeNull();
-        okResult.Value.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        okResult.Value.StatusCode.Should().Be(HttpStatusCode.OK);
         okResult.Value.IsSuccess.Should().BeTrue();
 
         // Verify only the description was updated

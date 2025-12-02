@@ -9,14 +9,11 @@ public static class GetProductById
 {
     public static async Task<Results<Ok<ApiResponse<Product>>, NotFound<ApiResponse<Product>>, BadRequest<ApiResponse<Product>>, InternalServerError<ApiResponse<Product>>>> Handle(ApplicationDbContext db, int id)
     {
-        var response = new ApiResponse<Product>();
 
         if (id < 1)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.BadRequest;
-            response.ErrorMessages.Add("Invalid Product Id");
-            return TypedResults.BadRequest(response);
+            return TypedResults.BadRequest(
+                ApiResponse.Fail<Product>("Invalid Product Id"));
         }
         
         try
@@ -25,22 +22,17 @@ public static class GetProductById
             
             if (product == null)
             {
-                response.IsSuccess = false;
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.ErrorMessages.Add("Product not found");
-                return TypedResults.NotFound(response);
+                return TypedResults.NotFound(
+                    ApiResponse.Fail<Product>("Product not found", HttpStatusCode.NotFound));
             }
 
-            response.StatusCode = HttpStatusCode.OK;
-            response.Result = product;
-            return TypedResults.Ok(response);
+            return TypedResults.Ok(
+                ApiResponse.Success(product));
         }
         catch (Exception exception)
         {
-            response.IsSuccess = false;
-            response.StatusCode = HttpStatusCode.InternalServerError;
-            response.ErrorMessages = [exception.Message];
-            return TypedResults.InternalServerError(response);
+            return TypedResults.InternalServerError(
+                ApiResponse.Fail<Product>(exception.Message, HttpStatusCode.InternalServerError));
         }
     }
 }
