@@ -58,6 +58,7 @@ public static class UploadProductImage
             
             await db.SaveChangesAsync();
 
+            response.StatusCode = HttpStatusCode.OK;
             response.Result = new UploadImageResponse { Url = url };
             return TypedResults.Ok(response);
         }
